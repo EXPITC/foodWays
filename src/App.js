@@ -1,16 +1,14 @@
-import logo from './logo.svg';
 import './App.css';
+
+//style
+import { GlobalStyles } from './GlobalStyles';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          hello world
-        </p>
-      </header>
-    </div>
+    <>
+    <h1>hello Word</h1>
+    <GlobalStyles/>
+    </>
   );
 }
 
