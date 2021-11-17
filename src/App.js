@@ -1,12 +1,11 @@
-import './App.css';
-
 //style
 import { GlobalStyles } from './GlobalStyles';
+import LandingPage from './components/LandingPage';
 
 function App() {
   return (
     <>
-    <h1>hello Word</h1>
+    <LandingPage/>
     <GlobalStyles/>
     </>
   );
