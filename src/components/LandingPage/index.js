@@ -1,6 +1,9 @@
 import { React, useState } from 'react';
 
+//components
 import Login from '../Login';
+import Register from '../Register';
+
 import Pizza from '../../img/pizza.svg';
 import Icon from '../../img/Icon.svg';
 import Trolly from '../../img/Trolly.svg';
@@ -51,11 +54,14 @@ const near = [
 
 const LandingPage = () => {
     let [show, setShow] = useState(false);
+    let [showR, setShowR] = useState(false);
     
-    const toggle = () => setShow(!show);console.log(show);
+    const toggle = () => (setShow(!show), setShowR(false));
+    const toggleR = () => (setShowR(!showR), setShow(false));
     return (
         <>
-            <Login show={ show }/>
+            <Login show={show} />
+            <Register showR={showR} />
             < WrapperYellow>
                 <OneLineFlexTop>
                     <img src={Icon} alt='icon' />
@@ -63,7 +69,7 @@ const LandingPage = () => {
                         {/* <ImgTrolly src={Trolly} alt="Trolly"/>
                 <ImgProfile src={Pizza} alt="Profile"/> */}
                         {/* login condition */}
-                        <button>Register</button>
+                        <button onClick={toggleR}>Register</button>
                         <button onClick={toggle}>Login</button>
                     </div>
                 </OneLineFlexTop>

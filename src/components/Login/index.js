@@ -1,6 +1,7 @@
 import React ,{useState ,useEffect} from 'react';
 
 import Xbtns from '../../img/close.png';
+
 import { Wrapper } from './Login.styled';
 
 const Login = ({show}) => {
@@ -13,6 +14,7 @@ const Login = ({show}) => {
     },[holder])
     const Cancel = () => setActive(!active);
     return (
+        <>
         <Wrapper active={active}>
                 <div className="login-cointainer">
                     <img className="x-button-login2" onClick={Cancel} src={Xbtns} alt=""/>
@@ -26,6 +28,7 @@ const Login = ({show}) => {
                     </form>
                 </div>
         </Wrapper>
+        </>
     )
 };
 

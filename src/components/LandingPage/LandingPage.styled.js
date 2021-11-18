@@ -29,6 +29,11 @@ export const OneLineFlexTop = styled.div`
         color:white;
         font-weight: bold;
         font-family: 'Shippori Antique B1', sans-serif;
+        &:hover {
+            border: 2px solid #433434;
+            color: #433434;
+            background:transparent;
+        }
     }
 `
 export const TextAndPizza = styled.div`
