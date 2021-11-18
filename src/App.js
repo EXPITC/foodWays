@@ -1,11 +1,11 @@
 //style
 import { GlobalStyles } from './GlobalStyles';
-import LandingPage from './components/LandingPage';
+import DetailPage from `../components/DetailPage`
 
 function App() {
   return (
     <>
-    <LandingPage/>
+    <DetailPage/>
     <GlobalStyles/>
     </>
   );
