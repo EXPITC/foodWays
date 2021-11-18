@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const Wrapper = styled.div`
+    display:  ${props => (props.active === true? 'none' : 'block')};
     justify-content: center;
     align-items: center;
     position: fixed;
@@ -8,16 +9,24 @@ export const Wrapper = styled.div`
     z-index: 1000;
     border-radius: 100;
     width: 30%;
-    left: ${props => (props.active === true? `-35%` : `0`)};
     height: 100%;
-    animation: ani 0.4s ease-in;
+    animation: ani 0.4s ease-in forwards;
+    
     
     @keyframes ani {
         0% {
-            right: -30%;
+            left: -30%;
         }
         100% {
-            right: 0;
+            left: 0;
+        }
+    }
+    @keyframes ani2 {
+        0% {
+            left: 0;
+        }
+        100% {
+            left: -30%;
         }
     }
     .singup2-cointainer {

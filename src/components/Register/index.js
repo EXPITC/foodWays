@@ -3,18 +3,17 @@ import { React, useState, useEffect } from 'react'
 import { Wrapper } from './Register.style'
 import Xbtns from '../../img/close.png';
 
-const Register = ({ showR }) => {
+const Register = ({ showR , Cancel , toggle}) => {
     let holder = showR;
-    const [activeR, setActiveR] = useState(holder);
+    let [activeR, setActiveR] = useState(holder);
     useEffect(() => {
         setActiveR(!activeR);
     },[holder])
-    const Cancel = () => setActiveR(!activeR);
-
+    
     return (
         <Wrapper active={activeR}>
            <div class="singup2-cointainer">
-                <img class="x-button-singup2" src={Xbtns} onClick={Cancel}alt=""/>
+                <img class="x-button-singup2" onClick={Cancel} src={Xbtns} alt=""/>
                 <form action="">
                     <h2>Register</h2>
                     <input type="email" name="email" placeholder="Email"/>
@@ -30,7 +29,7 @@ const Register = ({ showR }) => {
                     </select>
                     <button class="btnsingup2">SINGUP</button>
                     <p class="already-have-acc">already have any acc? </p>
-                    <p class="login-here" >login here!</p>
+                    <p class="login-here" onClick={toggle}>login here!</p>
                 </form>
             </div>
         </Wrapper>

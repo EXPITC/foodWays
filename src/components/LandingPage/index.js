@@ -58,10 +58,13 @@ const LandingPage = () => {
     
     const toggle = () => (setShow(!show), setShowR(false));
     const toggleR = () => (setShowR(!showR), setShow(false));
+    const Cancel = () => setShowR(!showR);
+    const CancelL = () => setShow(!show);
     return (
         <>
-            <Login show={show} />
-            <Register showR={showR} />
+            {show ? ( <Login show={show} Cancel={CancelL} toggle={toggleR}/>) : null}
+            {showR ? (<Register showR={showR} Cancel={Cancel} toggle={toggle} />) : null}
+            
             < WrapperYellow>
                 <OneLineFlexTop>
                     <img src={Icon} alt='icon' />
