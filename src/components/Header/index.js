@@ -5,7 +5,7 @@ import Trolly from '../../img/Trolly.svg';
 import Pizza from '../../img/pizza.svg';
 import { Head , TopFlex ,Wrap } from './Header.styled';
 
-const Header = ({val}) => {
+const Header = ({val , noTroll}) => {
   
     return (
         <Head>
@@ -13,7 +13,7 @@ const Header = ({val}) => {
                 <img src={Icon}/>
                 <Wrap>
                     {val ? <p>{val}</p> : null }
-                    <img src={Trolly}/>
+                    {noTroll ? null : <img src={Trolly} />}
                     <img className='profile'src={Pizza}/>
                 </Wrap>
             </TopFlex>
