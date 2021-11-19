@@ -1,11 +1,11 @@
 //style
 import { GlobalStyles } from './GlobalStyles';
-import DetailPage from './components/DetailPage';
+import CartPage from './components/CartPage';
 
 function App() {
   return (
     <>
-    <DetailPage/>
+    <CartPage/>
     <GlobalStyles/>
     </>
   );
