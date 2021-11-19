@@ -28,11 +28,11 @@ const Map = ({toggle}) => {
                 <Marker
                     latitude={-7.764025552237254}
                     longitude={110.40305394530179}
-                    offsetTop={(-viewport.zoom * 3)/2}
+                    offsetTop={(-viewport.zoom * 2)/2}
                 >
                     <img src={marker}
-                    width={viewport.zoom * 2}
-                    height={viewport.zoom *2}
+                    width={viewport.zoom * 3}
+                    height={viewport.zoom *3}
                     />
                 </Marker>
             </ReactMapGL>

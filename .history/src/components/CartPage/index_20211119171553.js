@@ -10,13 +10,9 @@ import Map from '../Map';
 const CartPage = () => {
     const [open, setOpen] = useState(false)
     const openMap = () => setOpen(!open)
-    const [val, setVal] = useState(1);
+    const [val, setVal] = useState(false);
     const add = () => setVal(val + 1);
     const remove = () => setVal(val - 1);
-
-    useEffect(()=> {
-        if(val <1) {setVal(1);}
-    },[val])
     return (
         <>
             {open? <Map toggle={openMap}/> : null }

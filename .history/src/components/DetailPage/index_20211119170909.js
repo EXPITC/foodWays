@@ -53,7 +53,7 @@ const DetailPage = () => {
     
     const [val, setVal] = useState(false);
     const add = () => setVal(val + 1);
-    const remove = () => setVal(val - 1);
+    const remove = () => setVal(val = 1);
     return (
         <>
         

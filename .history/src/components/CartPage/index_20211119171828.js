@@ -13,10 +13,9 @@ const CartPage = () => {
     const [val, setVal] = useState(1);
     const add = () => setVal(val + 1);
     const remove = () => setVal(val - 1);
+    useEffect(
 
-    useEffect(()=> {
-        if(val <1) {setVal(1);}
-    },[val])
+    ),[]
     return (
         <>
             {open? <Map toggle={openMap}/> : null }
