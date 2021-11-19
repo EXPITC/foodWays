@@ -5,7 +5,7 @@ import ProfilePage from './components/ProfilePage';
 function App() {
   return (
     <>
-    <ProfilePage/>
+    <CartPage/>
     <GlobalStyles/>
     </>
   );
