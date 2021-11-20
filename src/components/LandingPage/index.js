@@ -3,6 +3,7 @@ import { React, useState } from 'react';
 //components
 import Login from '../Login';
 import Register from '../Register';
+import DropDown from '../DropDown';
 
 import Pizza from '../../img/pizza.svg';
 import Icon from '../../img/Icon.svg';
@@ -69,11 +70,13 @@ const LandingPage = () => {
                 <OneLineFlexTop>
                     <img src={Icon} alt='icon' />
                     <div>
-                        {/* <ImgTrolly src={Trolly} alt="Trolly"/>
-                <ImgProfile src={Pizza} alt="Profile"/> */}
+                        <ImgTrolly src={Trolly} alt="Trolly">
+                        <ImgProfile src={Pizza} alt="Profile">
+                            <DropDown/>    
+                        </ImgProfile>
                         {/* login condition */}
-                        <button onClick={toggleR}>Register</button>
-                        <button onClick={toggle}>Login</button>
+                        {/* <button onClick={toggleR}>Register</button>
+                        <button onClick={toggle}>Login</button> */}
                     </div>
                 </OneLineFlexTop>
                 <TextAndPizza>
