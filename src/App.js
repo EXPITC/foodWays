@@ -9,7 +9,7 @@ import DetailPage from './components/DetailPage';
 function App() {
   return (
     <>
-    <LandingPage/>
+    <DetailPage/>
     <GlobalStyles/>
     </>
   );

@@ -7,14 +7,19 @@ export const Wrapper = styled.div`
     width:85%;
     margin:0 auto;
     display:flex;
+    align-items: center;
     flex-direction:column;
     h1 {
-        margin-top: 73px;
+        margin-top: 73px ;
         margin-bottom: 30px;
+        width: 100%;
     }
 `
 export const WrapCard = styled.div`
+    /* border:1px solid black; */
     display:flex;
+    max-width: 1070px;
+    width:auto;
     justify-content: space-between;
     flex-wrap: wrap;
     flex-grow: 1;

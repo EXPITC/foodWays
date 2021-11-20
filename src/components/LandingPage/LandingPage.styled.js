@@ -18,6 +18,28 @@ export const OneLineFlexTop = styled.div`
     /* border:1px solid black; */
     justify-content: space-between;
     align-items: center;
+    .poly {
+        opacity:0;
+        position:absolute;
+        animation: a 1s ease-out forwards;
+        animation-delay: 0.3s;
+        @keyframes a { 
+        0%{
+            opacity:0;
+            transform: translateX(60px)translateY(0px);
+        }
+        80%{
+            transform: translateX(60px)translateY(0px);
+        }
+        90%{
+            opacity:0.5;
+        }
+        100% {
+            transform: translateX(60px)translateY(-30px);
+            opacity:1;
+        }
+    }
+    }
     button {
         width: 100px;
         height: 30px;

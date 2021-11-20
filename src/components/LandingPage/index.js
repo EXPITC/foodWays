@@ -4,7 +4,8 @@ import { React, useState } from 'react';
 import Login from '../Login';
 import Register from '../Register';
 import DropDown from '../DropDown';
-
+//img
+import poly from '../../img/poly.svg';
 import Pizza from '../../img/pizza.svg';
 import Icon from '../../img/Icon.svg';
 import Trolly from '../../img/Trolly.svg';
@@ -56,27 +57,41 @@ const near = [
 const LandingPage = () => {
     let [show, setShow] = useState(false);
     let [showR, setShowR] = useState(false);
-    
+    const isLogin = true
     const toggle = () => (setShow(!show), setShowR(false));
     const toggleR = () => (setShowR(!showR), setShow(false));
     const Cancel = () => setShowR(!showR);
     const CancelL = () => setShow(!show);
     return (
         <>
-            {show ? ( <Login show={show} Cancel={CancelL} toggle={toggleR}/>) : null}
-            {showR ? (<Register showR={showR} Cancel={Cancel} toggle={toggle} />) : null}
-            
+            {isLogin ? null :
+            <>
+                {show ? (<Login show={show} Cancel={CancelL} toggle={toggleR} />) : null}
+                {showR ? (<Register showR={showR} Cancel={Cancel} toggle={toggle} />) : null}
+            </>  
+            }
+        
             < WrapperYellow>
                 <OneLineFlexTop>
                     <img src={Icon} alt='icon' />
                     <div>
-                        <ImgTrolly src={Trolly} alt="Trolly">
-                        <ImgProfile src={Pizza} alt="Profile">
-                            <DropDown/>    
-                        </ImgProfile>
+                        {isLogin ? <>
+                            <ImgTrolly src={Trolly} alt="Trolly" />
+                        <ImgProfile src={Pizza} onClick={toggle} alt="Profile" />
+                            {show ? <>
+                            <div className="poly">
+                                <img src={poly} />
+                            </div>
+                            <DropDown/>
+                            </>
+                                : null}
+                        </> : <>
+                            <button onClick={toggleR}>Register</button>
+                            <button onClick={toggle}>Login</button>
+                        </>}
+                            
                         {/* login condition */}
-                        {/* <button onClick={toggleR}>Register</button>
-                        <button onClick={toggle}>Login</button> */}
+                        
                     </div>
                 </OneLineFlexTop>
                 <TextAndPizza>
