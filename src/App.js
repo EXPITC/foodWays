@@ -1,11 +1,11 @@
 //style
 import { GlobalStyles } from './GlobalStyles';
-import EditProfile from './components/EditProfile';
+import TransactionPage from './components/TransactionPage';
 
 function App() {
   return (
     <>
-    <EditProfile/>
+    <TransactionPage/>
     <GlobalStyles/>
     </>
   );
