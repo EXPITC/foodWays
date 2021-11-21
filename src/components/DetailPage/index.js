@@ -3,6 +3,7 @@ import { React, useEffect, useState } from 'react';
 import Header from '../Header'
 import { Wrapper, WrapCard , CardMenu} from './DetailPage.styled'
 import Pizza from '../../img/pizza.svg';
+// check new this
 
 const near = [
     {
