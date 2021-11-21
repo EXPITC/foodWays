@@ -18,7 +18,7 @@ import TransactionPage from './components/TransactionPage';
 
 //components
 import LandingPage from './components/LandingPage';
-import DetailPage from './components/DetailPage';
+import DetailPage from './components/DetailPage/index_DetailPage';
 
 
 function App() {
