@@ -15,4 +15,4 @@ function App() {
   );
 }
 
-ex
+export default App;
