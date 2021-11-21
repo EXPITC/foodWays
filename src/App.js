@@ -16,10 +16,11 @@ import DetailPage from './components/DetailPage';
 import ProfilePage from './components/ProfilePage';
 import EditProfile from './components/EditProfile';
 import TransactionPage from './components/TransactionPage';
-
-
-
 import CartPage from './components/CartPagee';
+import EditProfile from './components/EditProfile';
+
+
+
 
 function App() {
   return (
