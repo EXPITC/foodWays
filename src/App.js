@@ -14,6 +14,7 @@ import LandingPage from './components/LandingPage';
 import DetailPage from './components/DetailPage';
 import ProfilePage from './components/ProfilePage';
 import EditProfile from './components/EditProfile';
+import TransactionPage from './components/TransactionPage';
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
     <DetailPage/>
     <ProfilePage/>
     <EditProfile/>
+    <TransactionPage/>
     <GlobalStyles/>
     </>
   );
