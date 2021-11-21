@@ -1,6 +1,6 @@
 //style
 import { GlobalStyles } from './GlobalStyles';
-import EditProfile from './components/EditProfile';
+import EditProfile from './componentss/EditProfile';
 
 function App() {
   return (
