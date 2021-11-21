@@ -20,6 +20,7 @@ import TransactionPage from './components/TransactionPage';
 import LandingPage from './components/LandingPage';
 import DetailPage from './components/DetailPage';
 
+import CartPage from './components/CartPagee';
 
 function App() {
   return (
