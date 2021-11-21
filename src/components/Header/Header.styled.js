@@ -12,7 +12,7 @@ export const TopFlex = styled.div`
     display:flex;
     justify-content: space-between;
     align-items: center;
-    width:95%
+    width:90%
 `
 
 export const Wrap = styled.div`
