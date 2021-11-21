@@ -3,7 +3,7 @@ import { GlobalStyles } from './GlobalStyles';
 
 //components
 import LandingPage from './components/LandingPage';
-import DetailPage from './components/DetailPage';
+import DetailPage from './components/DetailPage/index_DetailPage';
 
 
 function App() {
@@ -15,4 +15,4 @@ function App() {
   );
 }
 
-export default App;
+ex
