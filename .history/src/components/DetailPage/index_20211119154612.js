@@ -59,8 +59,8 @@ const DetailPage = () => {
         
             <Header val={val}/>
             <Wrapper>
-                <h1>Geprek Bensu, Menus</h1>
                 <WrapCard>
+                <h1>Geprek Bensu, Menus</h1>
                 {near.map((near) => {
                     return (
                         <CardMenu key={near.id}>
