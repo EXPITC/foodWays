@@ -18,7 +18,7 @@ const Header = ({ val , U ,noTroll}) => {
         <Head>
             <TopFlex>
                 <Link to="/">
-                <img src={Icon}/>
+                <img src={Icon} className="shake"/>
                 </Link>
                 <Wrap>
                     {val ? <p>{val}</p> : null}

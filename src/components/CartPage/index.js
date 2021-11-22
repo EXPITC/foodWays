@@ -63,16 +63,15 @@ const CartPage = ({ U}) => {
                                 </Wrap3>
                                 <Wrap3>
                                     <div>
-                                        <button><img src={ plus}/></button>
-                                    <h4 className="pinkBg">1</h4>
-                                        <button><img src={ min }/></button>
+                                        <button onClick={remove}><img src={ min }/></button>
+                                                <h4 className="pinkBg">{ val}</h4>
+                                        <button onClick={add}><img src={ plus}/></button>
                                     </div>
                                         <img src={ trash }/>
                                 </Wrap3>
                             </Wrap2>
                         </Wrap1>
-                    </Flex>
-                    <Flex>
+                    </Flex><Flex>
                         <Wrap1>
                             <img />
                             <Wrap2>
@@ -82,16 +81,15 @@ const CartPage = ({ U}) => {
                                 </Wrap3>
                                 <Wrap3>
                                     <div>
-                                        <button><img src={ plus}/></button>
-                                    <h4 className="pinkBg">1</h4>
-                                        <button><img src={ min }/></button>
+                                        <button onClick={remove}><img src={ min }/></button>
+                                                <h4 className="pinkBg">{ val}</h4>
+                                        <button onClick={add}><img src={ plus}/></button>
                                     </div>
                                         <img src={ trash }/>
                                 </Wrap3>
                             </Wrap2>
                         </Wrap1>
-                    </Flex>
-                    <Flex>
+                    </Flex><Flex>
                         <Wrap1>
                             <img />
                             <Wrap2>
@@ -101,47 +99,9 @@ const CartPage = ({ U}) => {
                                 </Wrap3>
                                 <Wrap3>
                                     <div>
-                                        <button><img src={ plus}/></button>
-                                    <h4 className="pinkBg">1</h4>
-                                        <button><img src={ min }/></button>
-                                    </div>
-                                        <img src={ trash }/>
-                                </Wrap3>
-                            </Wrap2>
-                        </Wrap1>
-                    </Flex>
-                    <Flex>
-                        <Wrap1>
-                            <img />
-                            <Wrap2>
-                                <Wrap3>
-                                    <h4>Paket Geprek</h4>
-                                    <p>Rp.15.000</p>
-                                </Wrap3>
-                                <Wrap3>
-                                    <div>
-                                        <button><img src={ plus}/></button>
-                                    <h4 className="pinkBg">1</h4>
-                                        <button><img src={ min }/></button>
-                                    </div>
-                                        <img src={ trash }/>
-                                </Wrap3>
-                            </Wrap2>
-                        </Wrap1>
-                    </Flex>
-                    <Flex>
-                        <Wrap1>
-                            <img />
-                            <Wrap2>
-                                <Wrap3>
-                                    <h4>Paket Geprek</h4>
-                                    <p>Rp.15.000</p>
-                                </Wrap3>
-                                <Wrap3>
-                                    <div>
-                                        <button><img src={ plus}/></button>
-                                    <h4 className="pinkBg">1</h4>
-                                        <button><img src={ min }/></button>
+                                        <button onClick={remove}><img src={ min }/></button>
+                                                <h4 className="pinkBg">{ val}</h4>
+                                        <button onClick={add}><img src={ plus}/></button>
                                     </div>
                                         <img src={ trash }/>
                                 </Wrap3>

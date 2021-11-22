@@ -122,12 +122,13 @@ const LandingPage = ({ U ,sett ,setf }) => {
                     {/* TODO: REPEAT */}
                     {resto.map((resto) => {
                         return(
-                        <Link to="/DetailPage">
-                        <CardResto key={resto.name} >
-                            <img src={resto.img} alt={resto.name} />
-                            <h2>{resto.name}</h2>
-                        </CardResto>
-                        </Link>)
+                        <Link to="/DetailPage" className="nonee">
+                            <CardResto key={resto.name} >
+                                <img src={resto.img} alt={resto.name} />
+                                <h2>{resto.name}</h2>
+                            </CardResto>
+                        </Link>
+                        )
                     })}
                 </WrapFlex2>
                 <h1>Restaurant Near You</h1>

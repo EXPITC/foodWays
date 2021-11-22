@@ -19,6 +19,22 @@ export const TopFlex = styled.div`
     justify-content: space-between;
     align-items: center;
     width:95%;
+   
+    .shake {
+        @keyframes shakes {
+                0%{
+                    transform:rotateZ(-10deg);
+                }40%{
+                    transform:rotateZ(6deg);
+                }100%{
+                    transform:rotateZ(-10deg);
+                }
+        }
+        &:hover {
+            animation:shakes 1s ease forwards;
+            opacity: 0.5;
+        }
+    }
 `
 
 export const Wrap = styled.div`

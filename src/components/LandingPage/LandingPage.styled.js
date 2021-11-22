@@ -8,7 +8,7 @@ export const WrapperYellow = styled.div`
     background: #FFC700;
     display:flex;
     justify-content: center;
-    animation: apprears 1s ease forwards;
+    animation: apprears 1s ease-in forwards;
     @keyframes apprears {
         from{
             opacity:0;
@@ -142,6 +142,9 @@ export const WrapFlex2 = styled.div`
     flex-direction: row;
     justify-content: space-between;
     margin-bottom: 91px;
+    .nonee{
+        text-decoration: none !important;
+    }
 `
 export const WrapFlex3 = styled.div`
     display:flex;
@@ -171,6 +174,7 @@ export const CardResto = styled.div`
     border-radius: 5px;
     display:flex;
     align-items: center;
+    
     h2 {
         font-family: Abhaya Libre ExtraBold;
         font-style: normal;
@@ -178,6 +182,7 @@ export const CardResto = styled.div`
         font-size: var(--fontMed);
         line-height: 28px;
         margin-left:19px;
+        color:black;
     }
     img {
         width: 65px;
