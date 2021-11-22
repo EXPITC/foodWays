@@ -1,4 +1,5 @@
 import { React, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import Icon from '../../img/Icon.svg';
 import Trolly from '../../img/Trolly.svg';
@@ -8,19 +9,24 @@ import poly from '../../img/poly.svg';
 import { Head, TopFlex, Wrap ,Polyy ,Specialdrop} from './Header.styled';
 import DropDown  from '../DropDown';
 
-const Header = ({ val }) => {
+const Header = ({ val , U ,noTroll}) => {
     let [show, setShow] = useState(false);
     const toggle = () => (setShow(!show));
-  
+
     return (
         <>
         <Head>
             <TopFlex>
+                <Link to="/">
                 <img src={Icon}/>
+                </Link>
                 <Wrap>
-                    {val ? <p>{val}</p> : null }
-                    <img src={Trolly}/>
-                    <img className='profile' onClick={toggle} src={Pizza} />
+                    {val ? <p>{val}</p> : null}
+                        {noTroll ? null :
+                            <Link ClassName="cart" to="/Cart">
+                                <img src={Trolly} />
+                            </Link>}
+                    <img className='profile' onClick={toggle} src='https://upload.wikimedia.org/wikipedia/en/2/23/Lofi_girl_logo.jpg' />
                 </Wrap>
             </TopFlex>
             {show ? <>
@@ -30,7 +36,7 @@ const Header = ({ val }) => {
                         </div>
                     </Polyy>
                     <Specialdrop>
-                        <DropDown className="drop" />
+                        <DropDown U={U}className="drop" logout/>
                     </Specialdrop>
                     </>
                 : null}

@@ -1,9 +1,11 @@
 import { React, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 //components
 import Login from '../Login';
 import Register from '../Register';
 import DropDown from '../DropDown';
+import Header from '../Header';
 //img
 import poly from '../../img/poly.svg';
 import Pizza from '../../img/pizza.svg';
@@ -54,10 +56,15 @@ const near = [
     },
 ]
 
-const LandingPage = () => {
+const LandingPage = ({ U ,sett ,setf }) => {
+    const [which ,setWhich] = useState(false);
     let [show, setShow] = useState(false);
     let [showR, setShowR] = useState(false);
-    const isLogin = true
+    const [isLogin, setLogin] = useState(false);
+    const [drop, setDrop] = useState(false);
+    const drops = () => (setDrop(!drop),setShow(false),setShowR(false));
+    const reg = () => (setLogin(!isLogin),setDrop(false),setWhich(!which));
+    const login = () => (setLogin(!isLogin),setDrop(false),setWhich(false));
     const toggle = () => (setShow(!show), setShowR(false));
     const toggleR = () => (setShowR(!showR), setShow(false));
     const Cancel = () => setShowR(!showR);
@@ -66,26 +73,30 @@ const LandingPage = () => {
         <>
             {isLogin ? null :
             <>
-                {show ? (<Login show={show} Cancel={CancelL} toggle={toggleR} />) : null}
-                {showR ? (<Register showR={showR} Cancel={Cancel} toggle={toggle} />) : null}
+                    {show ? (<Login show={show} Cancel={CancelL} toggle={toggleR} LoginSwitch={login}/>) : null}
+                    {showR ? (<Register showR={showR} Cancel={Cancel} toggle={toggle} RegisterSwitch={reg} />) : null}
             </>  
             }
-        
+            {/* <Header/> */}
             < WrapperYellow>
                 <OneLineFlexTop>
                     <img src={Icon} alt='icon' />
                     <div>
                         {isLogin ? <>
-                            <ImgTrolly src={Trolly} alt="Trolly" />
-                        <ImgProfile src={Pizza} onClick={toggle} alt="Profile" />
-                            {show ? <>
+                            <Link to='/Cart' >
+                                {which?<ImgTrolly src={Trolly} onClick={sett} alt="Trolly" /> : <ImgTrolly src={Trolly} onClick={setf} alt="Trolly" />}
+                            </Link>
+                        <ImgProfile src='https://upload.wikimedia.org/wikipedia/en/2/23/Lofi_girl_logo.jpg' onClick={drops} alt="Profile" />
+                            
+                        {drop ?
+                        <>
                             <div className="poly">
                                 <img src={poly} />
                             </div>
-                            <DropDown/>
-                            </>
-                                : null}
-                        </> : <>
+                            {which ? <DropDown U LogoutSwitch={login} set={sett} /> : <DropDown LogoutSwitch={login} set={setf}/>}</>: null}
+                        </>
+                            :
+                        <>
                             <button onClick={toggleR}>Register</button>
                             <button onClick={toggle}>Login</button>
                         </>}
@@ -108,15 +119,20 @@ const LandingPage = () => {
             <WrapMain>
                 <h1>Popular Restaurant</h1>
                 <WrapFlex2>
+                    {/* TODO: REPEAT */}
                     {resto.map((resto) => {
-                        return <CardResto key={resto.name} >
+                        return(
+                        <Link to="/DetailPage">
+                        <CardResto key={resto.name} >
                             <img src={resto.img} alt={resto.name} />
                             <h2>{resto.name}</h2>
                         </CardResto>
+                        </Link>)
                     })}
                 </WrapFlex2>
                 <h1>Restaurant Near You</h1>
                 <WrapFlex3>
+                     {/* TODO: REPEAT */}
                     {near.map((near) => {
                         return <CardNear key={near.food} >
                             <img src={near.img} alt={near.food} />

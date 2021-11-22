@@ -9,7 +9,7 @@ export const Wrapper = styled.div`
     padding-bottom:${props => props.h ? '35px' : '45px'};
     width:300px !important;
     background:white;
-    max-height:${props => props.h ? '112px !important' : '222px !important'};
+    max-height:${props => props.h ? '112px !important' : '272px !important'};
     /* top:10; */
     /* right:60px; */
     /* position:absolute; */
@@ -34,7 +34,7 @@ export const Wrapper2 = styled.div`
     align-items: center !important;
     /* padding-top:32px; */
     /* padding-bottom:32px; */
-    height: ${props => props.h? '218px' : '300px'};
+    height: ${props => props.h? '218px' : '350px'};
     width:300px !important;
     background:transparent !important;
     top:10 !important;

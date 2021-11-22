@@ -4,7 +4,7 @@ import Xbtns from '../../img/close.png';
 
 import { Wrapper } from './Login.styled';
 
-const Login = ({show , Cancel, toggle }) => {
+const Login = ({show , Cancel, toggle , LoginSwitch}) => {
     // console.log(active);
 
     const holder = show;
@@ -22,7 +22,7 @@ const Login = ({show , Cancel, toggle }) => {
                         <h2>Login</h2>
                         <input  type="email" name="email" placeholder="email"/>
                         <input type="password" name="password" placeholder="password"/>
-                        <button class="btnlogin2">LOGIN</button>
+                        <button class="btnlogin2" onClick={LoginSwitch}>LOGIN</button>
                         <p class="dont-have-acc">don't have any acc? </p>
                         <p class="singup-here" onClick={toggle} >singup here!</p>
                     </form>

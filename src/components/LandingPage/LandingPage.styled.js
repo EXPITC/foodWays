@@ -2,19 +2,34 @@ import styled from 'styled-components';
 
 export const WrapperYellow = styled.div`
     top: 0;
-    width: 100vw;
+    width: 100%;
     height:558px;
     position: relative;
     background: #FFC700;
     display:flex;
     justify-content: center;
+    animation: apprears 1s ease forwards;
+    @keyframes apprears {
+        from{
+            opacity:0;
+        }to{
+            opacity:1;
+        }
+    };
 `
 export const OneLineFlexTop = styled.div`
    @import url('https://fonts.googleapis.com/css2?family=Shippori+Antique+B1&display=swap');
-    margin-top: 27px;
-    width:90%;
+    padding-top: 27px;
+    margin-bottom: 10px;
+    padding-left:4%;
+    padding-right:4%;
+    width:100%;
+    position:sticky;
+    top: 0px;
+    z-index:999;
     display: flex;
-    height: 40px;
+    flex-wrap: wrap;
+    height: 84px;
     /* border:1px solid black; */
     justify-content: space-between;
     align-items: center;
@@ -113,6 +128,9 @@ export const ImgTrolly = styled.img`
     /* width: 60px;
     height: 60px; */
     margin-right: 23px;
+    &:hover {
+        opacity: 0.5;
+    }
 `
 export const WrapFlex = styled.div`
     display:flex;
@@ -132,7 +150,7 @@ export const WrapFlex3 = styled.div`
 `
 export const WrapMain = styled.div`
     margin:0 auto;
-    width:1045px;
+    width:80%;
     /* border:1px solid red; */
     display:flex;
     flex-direction: column;

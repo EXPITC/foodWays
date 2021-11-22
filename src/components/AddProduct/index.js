@@ -8,7 +8,7 @@ const AddProduct = () => {
 
     return (
         <>
-            <Header />
+            <Header noTroll/>
             <Wrapper>
                 <h1 >Add Product</h1>
                     <Flex btwn>

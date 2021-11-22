@@ -7,7 +7,7 @@ import min from '../../img/-.svg'
 import trash from '../../img/Trash.svg'
 import Header from '../Header';
 import Map from '../Map';
-const CartPage = () => {
+const CartPage = ({ U}) => {
     const [open, setOpen] = useState(false)
     const openMap = () => setOpen(!open)
     const [val, setVal] = useState(1);
@@ -21,18 +21,19 @@ const CartPage = () => {
         <>
             {open? <Map toggle={openMap}/> : null }
             
-            <Header val={val}/>
+            <Header val={val} U={U}/>
             <Wrapper>
                 <h1>Geprek Bensu, Menus</h1>
                 <h2>Delivery Location</h2>
                 <WrapContent>
-                    <div><p>Harbour building</p></div>
+                    <div><p>Yogyakarta, Sleman, Condong catur</p></div>
                     <button onClick={openMap}>Select On Map <img src={map}/></button>
                 </WrapContent>
                 <h2>Review Your Order</h2>
                 <WrapOrder>
                     <div className="over">
-                    <WrapOrder2>
+                        <WrapOrder2>
+                            {/* TC~REPEAT */}
                     <Flex>
                         <Wrap1>
                             <img />

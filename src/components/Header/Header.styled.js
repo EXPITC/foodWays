@@ -2,6 +2,8 @@ import styled from 'styled-components';
 
 
 export const Head = styled.div`
+    position:sticky;
+    top:0;
     background:var(--mainYellow);
     height: 91px;
     .drop{
@@ -21,8 +23,13 @@ export const TopFlex = styled.div`
 
 export const Wrap = styled.div`
     display: flex;
+    justify-content:center;
+    align-items:center;
     img{
         margin-left:23px;
+        &:hover{
+            opacity:0.5;
+        }
     }
     p{
         background:red;
@@ -32,15 +39,18 @@ export const Wrap = styled.div`
         font-size: 12px;
         color:white;
         text-align:center;
-        margin-left: 45px;
-        z-index:99;
-        position:absolute;
+        margin-top: 0px;
+        margin-left: -40px !important;
+        z-index:99 !important;
+        position:absolute !important;
     }
     .profile {
         width:60px;
         height:60px;
         border:1px solid black;
         border-radius:50%;
+        opacity:1 !important;
+        cursor:pointer;
     }
 `
 export const Polyy = styled.div`

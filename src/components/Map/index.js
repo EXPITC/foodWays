@@ -1,30 +1,61 @@
-import { React, useState, useEffect } from 'react';
+import { React, useState, useEffect ,useRef} from 'react';
 import ReactMapGL, { Marker } from 'react-map-gl';
+import Dir from './costumDirect';
+import 'mapbox-gl/dist/mapbox-gl.css'
 
-import close from '../../img/Trash.svg'
+import close from '../../img/close.png'
 import marker from '../../img/marker.png'
 import { Wrapper , Bg} from './Map.styled';
 
 const Map = ({toggle}) => {
-    const [viewport, setViewport] = useState({
-        latitude: -7.7931344997599465,
-        longitude: 110.37100225029263,
-        width: '100%',
-        height: '100%',
-        zoom:11
-    })
+    const [viewport, setViewport] = useState({})
+   
+    
+    useEffect(() => {
+        setTimeout(() => {
+            setViewport({
+                latitude: -7.7931344997599465,
+                longitude: 110.37100225029263,
+                width: '100%',
+                height: '100%',
+                zoom:8
+            })
+        }, 1100)
+        setTimeout(() => {
+            setViewport({
+                latitude: -7.7931344997599465,
+                longitude: 110.37100225029263,
+                width: '100%',
+                height: '100%',
+                zoom:11
+            })
+        }, 2000)
+    }, [])
+    const [val, setVal] = useState(false)
+    const mapRef = useRef()
+    const doit = () => {
+        setVal(false)
+        setTimeout(() =>{toggle()},100)
+    }
     return (
         <Bg>
+            <link
+  href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.css"
+  rel="stylesheet"
+/>
         <Wrapper>
-            <img className="x"onClick={toggle} src={close}/>
-            <ReactMapGL
+            <img className="x" onClick={doit} src={close}/>
+                <ReactMapGL
+                ref={mapRef}
                 {...viewport}
                 mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
-                mapStyle = "mapbox://styles/expitc/ckw66dojb2fye14lcysxs3mcb"
+                    mapStyle="mapbox://styles/expitc/ckw66dojb2fye14lcysxs3mcb"
+                    // mapbox://styles/mapbox/streets-v11
                 onViewportChange={(viewport) => {
                     setViewport(viewport);
                 }}
-            >
+                >
+                <Dir mapRef={mapRef} mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN} />
                 <Marker
                     latitude={-7.764025552237254}
                     longitude={110.40305394530179}

@@ -1,11 +1,12 @@
 import { React } from 'react';
+import {Link} from 'react-router-dom'
 
 import Header from '../Header'
 import Icon from '../../img/Icon.svg'
 import { Wrapper ,FlexCollum, Flex ,Pp , Buttons} from './ProfilePage.styled';
 
-const ProfilePage = () => {
-    const which = false;
+const ProfilePage = ({U}) => {
+    const which = U;
     const data = [
         {
             title1: (which?'My Profile' : 'Profile Partner'),
@@ -17,14 +18,16 @@ const ProfilePage = () => {
     ]
     return (
         <>
-            <Header/>
+            <Header U={U} logout/>
             <Wrapper>
                 <FlexCollum>
                     <h1>{data[0].title1}</h1>
                     <Flex>
                         <FlexCollum>
-                            <img className="img" alt={data[0].img}/>
+                            <img className="img" src='https://bhsowl.org/wp-content/uploads/2020/11/LOFI.jpg'alt={data[0].img}/>
+                            <Link to="/Edit/Profile">
                             <button>Edit Profile</button>
+                            </Link>
                         </FlexCollum>
                         <FlexCollum className="h">
                             <div>

@@ -4,45 +4,74 @@ import { Wrapper ,Wrapper2 ,Icon , JustWrap ,Logout} from './DropDown.styled';
 import userIcon from '../../img/user.svg';
 import logoutIcon from '../../img/logout.svg';
 import foodIcon from '../../img/foodicon.svg';
-
-const DropDown = () => {
+import Transaction from '../../img/transaction.svg';
+import { Link } from 'react-router-dom';
+const DropDown = ({U , LogoutSwitch , set, logout}) => {
     // x = false;
-    const val = true
+    const val = !U
     return (
         <>
             {val ?<>
                 <Wrapper2 >
                     <Wrapper>
-                        <JustWrap>
+                        <Link to="/Profile">
+                        <JustWrap onClick={set}>
                             <Icon src={userIcon} />
                             <p>Profile Partner</p>
                         </JustWrap>
-                        <JustWrap>
+                        </Link>
+                        <Link to="/Add-Product">
+                        <JustWrap onClick={set}>
                             <Icon src={foodIcon} />
                             <p>Add Product</p>
                         </JustWrap>
+                        </Link>
+                        <Link to="/Transaction">
+                        <JustWrap onClick={set}>
+                            <Icon src={Transaction} />
+                            <p>Transaction</p>
+                        </JustWrap>
+                        </Link>
                     </Wrapper>
                     <Logout>
-                        <JustWrap>
+                    {logout ? 
+                        <Link to="/">
+                            <JustWrap onClick={LogoutSwitch}>
                             <Icon src={logoutIcon} />
                             <p>Logout</p>
                         </JustWrap>
+                        </Link>
+                        :
+                        <JustWrap onClick={LogoutSwitch}>
+                            <Icon src={logoutIcon} />
+                            <p>Logout</p>
+                        </JustWrap>}
                     </Logout>
                 </Wrapper2>
                 </>
                 :
                 <Wrapper2 h>
                     <Wrapper h>
-                        <JustWrap h>
+                    <Link to="/Profile">
+                        <JustWrap h onClick={set}>
                             <Icon src={userIcon} />
-                            <p>Profile Partner</p>
+                            <p>Profile</p>
                         </JustWrap>
+                    </Link>
                     </Wrapper>
                     <Logout h>
-                        <JustWrap>
+                        {logout ? 
+                        <Link to="/">
+                            <JustWrap onClick={LogoutSwitch}>
                             <Icon src={logoutIcon} />
                             <p>Logout</p>
                         </JustWrap>
+                        </Link>
+                        :
+                        <JustWrap onClick={LogoutSwitch}>
+                            <Icon src={logoutIcon} />
+                            <p>Logout</p>
+                        </JustWrap>}
                     </Logout>
                 </Wrapper2>
             }

@@ -3,7 +3,7 @@ import { React, useState, useEffect } from 'react'
 import { Wrapper } from './Register.style'
 import Xbtns from '../../img/close.png';
 
-const Register = ({ showR , Cancel , toggle}) => {
+const Register = ({ showR , Cancel , toggle , RegisterSwitch}) => {
     let holder = showR;
     let [activeR, setActiveR] = useState(holder);
     useEffect(() => {
@@ -27,7 +27,7 @@ const Register = ({ showR , Cancel , toggle}) => {
                         <option value="Costumer">Costumer</option>
                         <option value="Owner">Owner</option>
                     </select>
-                    <button class="btnsingup2">SINGUP</button>
+                    <button class="btnsingup2" onClick={RegisterSwitch}>SINGUP</button>
                     <p class="already-have-acc">already have any acc? </p>
                     <p class="login-here" onClick={toggle}>login here!</p>
                 </form>

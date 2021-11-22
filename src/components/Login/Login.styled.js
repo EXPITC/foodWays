@@ -78,8 +78,8 @@ export const Wrapper = styled.div`
         cursor: pointer;
         /* filter: brightness(0) invert(1); */
         width: 5%;
-        top: 3%;
-        right: 3%;
+        top: 2.5%;
+        right: 3.5%;
         position: absolute;
         transform: translateZ(999);
     }

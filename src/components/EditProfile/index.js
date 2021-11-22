@@ -8,10 +8,10 @@ import { Wrapper ,WrapperMain ,Flex} from './EditProfile.styled'
 
 
 
-const EditProfile = () => {
+const EditProfile = ({ U }) => {
     const [showMap, setShowMap] = useState(false);
     const toggle = () => setShowMap(!showMap);
-    const which = false
+    const which = U
     const data = [
         {
             Title1 : (which ? 'Edit Profile' : 'Edit Profile Partner'),
