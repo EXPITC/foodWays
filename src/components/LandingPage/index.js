@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import Login from '../Login';
 import Register from '../Register';
 import DropDown from '../DropDown';
-import Header from '../Header';
+
 //img
 import poly from '../../img/poly.svg';
 import Pizza from '../../img/pizza.svg';
