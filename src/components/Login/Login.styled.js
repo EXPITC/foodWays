@@ -1,44 +1,69 @@
 import styled from 'styled-components';
 
+export const Bg = styled.div`
+     z-index: 999;
+     width: 100%;
+     height: 100%;
+     position: fixed;
 
+     justify-content: center;
+     align-items: center;
+     animation: anibg 1s linear forwards;
+     @keyframes anibg {
+        from {
+            background: rgba(0, 0, 0, 0.8);
+        } to{
+            background: rgba(0, 0, 0, 0.5);
+        }
+     }
+`
 export const Wrapper = styled.div`
     display:  ${props => (props.active === true? 'none' : 'block')};
     justify-content: center;
     align-items: center;
     position: fixed;
     background: white;
-    z-index: 1000;
+    z-index: 998;
+    border:1px solid black;
     border-radius: 100;
-    width: 30%;
-    height: 100%;
-    animation: ani 0.4s ease-in;
-    
-    @keyframes ani {
-        0% {
-            left: -30%;
-        }
-        100% {
-            left: 0;
-        }
-    }
+    width: 100vw;
+    height: 100vh;
+    background:none;
 
+    
     .login-cointainer {
+        animation: ani 0.6s ease-out forwards;
+        transition: 0.6s ease-out;
         background:#ffff;
-        background-position: 50%;
-        transform: skewY(-50%);
+        
+        /* background-position: 50%; */
+        /* transform: skewY(-50%); */
         display: flex;
-        height: 100vh;
+        width: 416px;
+        height: 408px;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         position: sticky;
-        top: 0;
-        margin: 10px solid black;
+        margin:0 auto;
+        margin-top:50%;
+        border-radius: 10px;
+        @keyframes ani {
+        0% {
+            margin-top:50%;
+        }
+        100% {
+            margin-top:10%;
+        }
+    }
+        /* top: 0; */
+        /* margin: 10px solid black; */
     }
     form {
+        
         display: flex;
         flex-direction: column;
-        margin-top: 30%;
+        /* margin-top: 30%; */
         justify-self: center;
         align-items: center;
         position: sticky;

@@ -10,17 +10,19 @@ import Map from '../Map';
 const CartPage = ({ U}) => {
     const [open, setOpen] = useState(false)
     const openMap = () => setOpen(!open)
+    const [far, setFar] = useState(false)
+    const openMapFar = () => setFar(!far)
     const [val, setVal] = useState(1);
     const add = () => setVal(val + 1);
     const remove = () => setVal(val - 1);
-
+    const [order, setOrder] = useState(false);
     useEffect(()=> {
         if(val <1) {setVal(1);}
     },[val])
     return (
         <>
             {open? <Map toggle={openMap}/> : null }
-            
+            {far ?<Map toggle={openMapFar} far/> : null}
             <Header val={val} U={U}/>
             <Wrapper>
                 <h1>Geprek Bensu, Menus</h1>
@@ -132,7 +134,7 @@ const CartPage = ({ U}) => {
                     </FlexCollum>
                 </WrapOrder>
                 <Orderbtn>
-                    <button>Order</button>
+                    {order ?<button onClick={openMapFar}>See How Far?</button>:<button onClick={()=>setOrder(!order)}>Order</button>}
                 </Orderbtn>
             </Wrapper>
         </>

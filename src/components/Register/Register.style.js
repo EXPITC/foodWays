@@ -1,46 +1,48 @@
 import styled from 'styled-components';
 
+export const Bg = styled.div`
+     z-index: 999;
+     width: 100%;
+     height: 100%;
+     position: fixed;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     animation: anibg 1s linear forwards;
+     @keyframes anibg {
+        from {
+            background: rgba(0, 0, 0, 0.8);
+        } to{
+            background: rgba(0, 0, 0, 0.5);
+        }
+     }
+`
 export const Wrapper = styled.div`
     display:  ${props => (props.active === true? 'none' : 'block')};
-    justify-content: center;
-    align-items: center;
+    /* justify-content: center;
+    align-items: center; */
     position: fixed;
-    background: white;
+    background: none;
     z-index: 1000;
-    border-radius: 100;
-    width: 30%;
-    height: 100%;
-    animation: ani 0.4s ease-in forwards;
-    
-    
-    @keyframes ani {
-        0% {
-            left: -30%;
+    /* border:1px solid black; */
+    animation: regAni 0.5s ease-out forwards;
+        @keyframes regAni {
+            from{
+                top:80%;
+            }to {
+                top:5%;
+            }
         }
-        100% {
-            left: 0;
-        }
-    }
-    @keyframes ani2 {
-        0% {
-            left: 0;
-        }
-        100% {
-            left: -30%;
-        }
-    }
     .singup2-cointainer {
-    background:white;
-    background-position: 50%;
-    transform: skewY(-50%);
-    display: flex;
-    height: 100vh;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    margin: 10px solid black;
+        background:white;
+        display: flex;
+        width: 416px;
+        height: 694px;
+        border-radius: 10px;
+        flex-direction: column;
+        align-items: center;
+       
+        /* margin: 10px solid black; */
     }
     h2 {
         @import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&family=Shippori+Antique+B1&display=swap');
@@ -58,14 +60,16 @@ export const Wrapper = styled.div`
         display: flex;
         flex-direction: column;
         margin-top: 20%;
+        height: 544px;
         justify-self: center;
         align-items: center;
         position: sticky;
+        /* border:1px solid black; */
     }
     form input {
         @import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&family=Shippori+Antique+B1&display=swap');
         font-family: 'Shippori Antique B1', sans-serif;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
         background-color: transparent;
         display: block;
         width: 100%;

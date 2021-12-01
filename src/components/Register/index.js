@@ -1,9 +1,9 @@
 import { React, useState, useEffect } from 'react'
 
-import { Wrapper } from './Register.style'
+import { Wrapper ,Bg } from './Register.style'
 import Xbtns from '../../img/close.png';
 
-const Register = ({ showR , Cancel , toggle , RegisterSwitch}) => {
+const Register = ({ showR , Cancel , toggle , RegisterSwitch ,}) => {
     let holder = showR;
     let [activeR, setActiveR] = useState(holder);
     useEffect(() => {
@@ -11,6 +11,7 @@ const Register = ({ showR , Cancel , toggle , RegisterSwitch}) => {
     },[holder])
     
     return (
+        <Bg>
         <Wrapper active={activeR}>
            <div class="singup2-cointainer">
                 <img class="x-button-singup2" onClick={Cancel} src={Xbtns} alt=""/>
@@ -28,11 +29,11 @@ const Register = ({ showR , Cancel , toggle , RegisterSwitch}) => {
                         <option value="Owner">Owner</option>
                     </select>
                     <button class="btnsingup2" onClick={RegisterSwitch}>SINGUP</button>
-                    <p class="already-have-acc">already have any acc? </p>
-                    <p class="login-here" onClick={toggle}>login here!</p>
+                    <p class="already-have-acc">Already have an account ?  <span class="login-here" onClick={toggle}>Klik Here</span></p>
                 </form>
             </div>
         </Wrapper>
+        </Bg>
     )
 }
 
