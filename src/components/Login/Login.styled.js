@@ -24,7 +24,7 @@ export const Wrapper = styled.div`
     position: fixed;
     background: white;
     z-index: 998;
-    border:1px solid black;
+    /* border:1px solid black; */
     border-radius: 100;
     width: 100vw;
     height: 100vh;
@@ -35,7 +35,7 @@ export const Wrapper = styled.div`
         animation: ani 0.6s ease-out forwards;
         transition: 0.6s ease-out;
         background:#ffff;
-        
+        /* border:1px solid red; */
         /* background-position: 50%; */
         /* transform: skewY(-50%); */
         display: flex;
@@ -60,25 +60,28 @@ export const Wrapper = styled.div`
         /* margin: 10px solid black; */
     }
     form {
-        
+        /* border:1px solid black; */
         display: flex;
         flex-direction: column;
+        width: 90%;
         /* margin-top: 30%; */
         justify-self: center;
         align-items: center;
         position: sticky;
+        gap:0.3rem;
     }
     form input {
         @import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&family=Shippori+Antique+B1&display=swap');
         font-family: 'Shippori Antique B1', sans-serif;
         margin-bottom: 20px;
-        background-color: transparent;
+        /* background-color: transparent; */
         display: block;
+        max-width: 350px;
         width: 100%;
-        border: none;
-        border-bottom: 2px solid #433434;
-;
-        min-width: 250px;
+        height: 50px;
+        background: rgba(210, 210, 210, 0.25);
+        border: 2px solid #D2D2D2;
+        border-radius: 5px;
         padding-left: 5px;
         outline: none;
         color: #433434
@@ -86,8 +89,9 @@ export const Wrapper = styled.div`
     form input::placeholder {
         @import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&family=Shippori+Antique+B1&display=swap');
         font-family: 'Shippori Antique B1', sans-serif;
-        text-align: center;
-        color: #433434;
+        text-align: left;
+        color: #B1B1B1;
+        font-size: 18px;
     }
     h2 {
         @import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&family=Shippori+Antique+B1&display=swap');
@@ -119,7 +123,9 @@ export const Wrapper = styled.div`
         font-weight: bold;
     }
     .login-cointainer button {
+        
         margin-top: 3%;
+        margin-bottom: 0px;
         width: 20vw;
     }
 
@@ -135,6 +141,7 @@ export const Wrapper = styled.div`
     font-family: nunito,roboto,proxima-nova,"proxima nova",sans-serif;
     font-size: 16px;
     font-weight: 800;
+    width:95%;
     line-height: 16px;
     min-height: 40px;
     outline: 0;

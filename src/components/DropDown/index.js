@@ -1,4 +1,5 @@
-import { React, useEffect, useState } from 'react';
+import { React, useEffect, useState, useContext } from 'react';
+import { UserContext } from '../../Context/userContext';
 
 import { Wrapper ,Wrapper2 ,Icon , JustWrap ,Logout} from './DropDown.styled';
 import userIcon from '../../img/user.svg';
@@ -8,12 +9,24 @@ import Transaction from '../../img/transaction.svg';
 import { Link } from 'react-router-dom';
 const DropDown = ({U , LogoutSwitch , set, logout}) => {
     // x = false;
-    const val = !U
+    const { state, dispatch } = useContext(UserContext)
+    const handleLogout = () => {
+        dispatch({
+            status: 'logout'
+        })
+        console.log(state)
+    }
+    const {user} = state
+    let isOwner = false
+    if (user?.role === 'owner') {
+      isOwner = true
+    }
     return (
         <>
-            {val ?<>
+            {isOwner ?<>
                 <Wrapper2 >
                     <Wrapper>
+                        
                         <Link to="/Profile">
                         <JustWrap onClick={set}>
                             <Icon src={userIcon} />
@@ -36,13 +49,13 @@ const DropDown = ({U , LogoutSwitch , set, logout}) => {
                     <Logout>
                     {logout ? 
                         <Link to="/">
-                            <JustWrap onClick={LogoutSwitch}>
+                            <JustWrap onClick={handleLogout}>
                             <Icon src={logoutIcon} />
                             <p>Logout</p>
                         </JustWrap>
                         </Link>
                         :
-                        <JustWrap onClick={LogoutSwitch}>
+                        <JustWrap onClick={handleLogout}>
                             <Icon src={logoutIcon} />
                             <p>Logout</p>
                         </JustWrap>}
@@ -62,13 +75,13 @@ const DropDown = ({U , LogoutSwitch , set, logout}) => {
                     <Logout h>
                         {logout ? 
                         <Link to="/">
-                            <JustWrap onClick={LogoutSwitch}>
+                            <JustWrap onClick={handleLogout}>
                             <Icon src={logoutIcon} />
                             <p>Logout</p>
                         </JustWrap>
                         </Link>
                         :
-                        <JustWrap onClick={LogoutSwitch}>
+                        <JustWrap onClick={handleLogout}>
                             <Icon src={logoutIcon} />
                             <p>Logout</p>
                         </JustWrap>}

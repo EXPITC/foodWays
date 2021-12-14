@@ -17,20 +17,23 @@ export const Wrapper = styled.div`
         padding-left: 10px;
     }
     .first {
-        width :927px;
+        max-width :927px;
+        width:100%;
         height:50px;
     }
     .second {
         font-family: 'Montserrat', sans-serif;
-        width: 213px;
+        max-width: 213px;
+        width:100%;
         height: 50px;
         border-radius: 5px;
         border: 2px solid #766C6C;
         background: rgba(210, 210, 210, 0.25);
     }
     .third {
-        width: 1157px;
+        max-width: 1157px;
         height: 50px;
+        width:100%;
     }
     label{
         display:flex;
@@ -51,7 +54,8 @@ export const WrapperMain = styled.div`
         background: #433434;
         border-radius: 5px;
         border:0;
-        width: 260px;
+        max-width: 260px;
+        width:100%;
         height: 40px;
         font-family: 'Montserrat', sans-serif;
         font-weight: bold;
@@ -71,6 +75,7 @@ export const Flex = styled.div`
     display:flex;
     ${props => props.btwn ? `
     justify-content:space-between;
+    gap:1rem;
     `: null}
     margin-bottom: 27px;
 `

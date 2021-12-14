@@ -1,5 +1,7 @@
-import { React, useState } from 'react';
+import { React, useState ,useContext , useEffect} from 'react';
 import { Link } from 'react-router-dom';
+import { API, handleError } from '../../config/api'
+
 
 //components
 import Login from '../Login';
@@ -11,7 +13,9 @@ import poly from '../../img/poly.svg';
 import Pizza from '../../img/pizza.svg';
 import Icon from '../../img/Icon.svg';
 import Trolly from '../../img/Trolly.svg';
-import { WrapperYellow , OneLineFlexTop , TextAndPizza , WrapFlex , WrapFlex2 , WrapFlex3 , CardNear , Text ,ImgPizza , ImgProfile , ImgTrolly, WrapMain , CardResto} from './LandingPage.styled';
+import {WrapperYellow , OneLineFlexTop , TextAndPizza , WrapFlex , WrapFlex2 , WrapFlex3 , CardNear , Text ,ImgPizza , ImgProfile , ImgTrolly, WrapMain , CardResto, Polyy} from './LandingPage.styled';
+
+import { UserContext } from '../../Context/userContext';
 
 
 // TC~Dummy
@@ -57,24 +61,42 @@ const near = [
 ]
 
 const LandingPage = ({ U ,sett ,setf }) => {
-    const [which ,setWhich] = useState(false);
+    // const [which ,setWhich] = useState(false);
     let [show, setShow] = useState(false);
     let [showR, setShowR] = useState(false);
-    const [isLogin, setLogin] = useState(false);
     const [drop, setDrop] = useState(false);
     const drops = () => (setDrop(!drop),setShow(false),setShowR(false));
-    const reg = () => (setLogin(!isLogin),setDrop(false),setWhich(!which));
-    const login = () => (setLogin(!isLogin),setDrop(false),setWhich(false));
+    // const reg = () => (setDrop(false),setWhich(!which));
+    // const login = () => (setDrop(false),setWhich(false));
     const toggle = () => (setShow(!show), setShowR(false));
     const toggleR = () => (setShowR(!showR), setShow(false));
     const Cancel = () => setShowR(!showR);
     const CancelL = () => setShow(!show);
+
+    const { state, dispatch } = useContext(UserContext)
+    const { isLogin, user } = state
+    let which = true
+    if (user.role === 'owner') {
+        which = false
+    }
+    const [total, letTotal] = useState(null)
+    useEffect(async() => {
+            await API.get('/order/count')
+                .then(res => letTotal(res.data.total))
+                .catch(err => handleError(err))
+    }, [])
+    const [restos, setRestos] = useState([])
+    useEffect(async() => {
+        await API.get('/restos')
+            .then((res) => { setRestos(res.data.data.restos) })
+    },[])
+
     return (
         <>
             {isLogin ? null :
             <>
-                    {show ? (<Login show={show} Cancel={CancelL} toggle={toggleR} LoginSwitch={login}/>) : null}
-                    {showR ? (<Register showR={showR} Cancel={Cancel} toggle={toggle} RegisterSwitch={reg} />) : null}
+                    {show ? (<Login show={show} Cancel={CancelL} toggle={toggleR} />) : null}
+                    {showR ? (<Register showR={showR} Cancel={Cancel} toggle={toggle}  />) : null}
             </>  
             }
             {/* <Header/> */}
@@ -83,17 +105,22 @@ const LandingPage = ({ U ,sett ,setf }) => {
                     <img src={Icon} alt='icon' />
                     <div>
                         {isLogin ? <>
+                            {which ? 
                             <Link to='/Cart' >
-                                {which?<ImgTrolly src={Trolly} onClick={sett} alt="Trolly" /> : <ImgTrolly src={Trolly} onClick={setf} alt="Trolly" />}
-                            </Link>
-                        <ImgProfile src='https://upload.wikimedia.org/wikipedia/en/2/23/Lofi_girl_logo.jpg' onClick={drops} alt="Profile" />
+                                {total ? <p>{total}</p> : null}
+                                <ImgTrolly src={Trolly} onClick={sett} alt="Trolly" />
+                            </Link> : null}
+                        <ImgProfile src={user.image} onClick={drops} alt="Profile" />
                             
                         {drop ?
                         <>
-                            <div className="poly">
-                                <img src={poly} />
-                            </div>
-                            {which ? <DropDown U LogoutSwitch={login} set={sett} /> : <DropDown LogoutSwitch={login} set={setf}/>}</>: null}
+                            <Polyy>
+                                <div className="poly">
+                                    <img src={poly} />
+                                </div>
+                            </Polyy>
+                            <DropDown/>
+                        </> : null}
                         </>
                             :
                         <>
@@ -120,16 +147,16 @@ const LandingPage = ({ U ,sett ,setf }) => {
                 <h1>Popular Restaurant</h1>
                 <WrapFlex2>
                     {/* TODO: REPEAT */}
-                    {resto.map((resto) => {
-                        return(
-                        <Link to="/DetailPage" className="nonee">
-                            <CardResto key={resto.name} >
-                                <img src={resto.img} alt={resto.name} />
-                                <h2>{resto.name}</h2>
-                            </CardResto>
-                        </Link>
-                        )
-                    })}
+                    {restos.map((resto) => {
+            return(
+                <Link to={`/Resto/${resto.id}`}className="nonee">
+                    <CardResto key={resto.title} >
+                        <img src={resto.img} alt={resto.name} />
+                        <h2>{resto.title}</h2>
+                    </CardResto>
+                </Link>
+            )
+        })}
                 </WrapFlex2>
                 <h1>Restaurant Near You</h1>
                 <WrapFlex3>

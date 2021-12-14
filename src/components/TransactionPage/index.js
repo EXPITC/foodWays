@@ -1,79 +1,65 @@
-import { React ,useState ,useEffect} from 'react';
-
+import { React ,useState ,useEffect , useContext} from 'react';
+import {io} from 'socket.io-client'
 import Header from '../Header'
 import approve from '../../img/approve.svg'
 import cancel from '../../img/cancel.svg'
 import { Wrapper ,Head ,Tab ,Special ,TwoB} from './TransactionPage.styled';
+import {UserContext} from '../../Context/userContext'
+import {API, handleError} from '../../config/api'
 
+
+let socket;
 const TransactionPage = () => {
-    const [res, setRes] = useState([
-        {
-            id: 1,
-            val:true
-        },
-        {
-            id:2,
-            val:false
-        },
-        {
-            id: 3,
-            val:false
-        },
-        {
-            id:4,
-            val:false
-        }
-    ]);
-    const [fin, setFin] = useState([
-        {
-            id:1,
-            permit: null,
-            stat: 'w',
-            status: 'Waiting Approve',
-            data: {
-                name: 'Sugeng No Pants',
-                address: 'Cileungsi',
-                Product: 'Pkaket Geprek, Paket ke..'
-            }
-        },
-        {
-            id:2,
-            permit: approve,
-            stat: 's',
-            status: 'Success',
-            data: {
-                name: 'Haris Gams',
-                address: 'Serang',
-                Product: 'Pkaket Geprek, Paket ke..'
-            }
-        },
-        {
-            id:3,
-            permit: cancel,
-            stat: 'c',
-            status: 'Cancel',
-            data: {
-                name: 'Aziz Union',
-                address: 'Bekasi',
-                Product: 'Pkaket Geprek, Paket ke..'
-            }
-        },
-        {
-            id:4,
-            permit: approve,
-            stat: 'o',
-            status: 'On The Way',
-            data: {
-                name: 'Lae Tanjung Balai',
-                address: 'Tanjung Balai',
-                Product: 'Pkaket Geprek, Paket ke..'
-            }
-        },
-        
-    ]);
+    const { state, dispatch } = useContext(UserContext)
+    const [refresh, setRefresh] = useState(false)
+    const [transaction, setTransaction] = useState([])
+    const [firstHolder , setFirstHolder] = useState(false)
     useEffect(() => {
-        console.log(fin[0],fin[1])        
-    },[fin])
+        socket = io('http://localhost:5000', {
+            auth: {
+                token: localStorage.getItem("token") 
+            },
+            query: {
+                id: state.user.id
+            }
+        })
+        socket.on('connect', () => {
+            console.log(socket);
+        })
+        // socket.on('new transaction', (x) => {
+        //     console.log(x)
+        //     socket.emit('transaction')
+        //     Transaction()
+        // })
+        if (firstHolder === false) {
+            setFirstHolder(true)
+        }
+        socket.emit('transaction')
+        socket.on("connect_error", (err) => {
+            console.error(err.message); 
+        });
+        Transaction()
+        return () => {
+            socket.disconnect()
+        }
+    }, [transaction])
+    
+    const Approve = (x) => {
+        socket.emit('otw')
+        socket.emit('accept', x)
+        setRefresh(!refresh)
+    }
+    const Cancel = (x) => {
+        socket.emit('cancel', x)
+        setRefresh(!refresh)
+    }
+    const Transaction = () => {
+        socket.on('transactionData', (data) => {
+            setTransaction(data)
+            console.log(data)
+        })
+    }
+    let count = 0
     return (
         <>
             <Header noTroll />
@@ -89,75 +75,34 @@ const TransactionPage = () => {
                         <Head m p>Action</Head>
                     </tr>
                     {/* TC~REPEAT */}
-                    {fin.map((_) => {
-                        const id = _.id - 1
-                        console.log(id)
+                    {transaction.map((_) => {
+                        count = count + 1
                         return (
-                        <tr>
-                        <Special>{_.id}</Special>
-                        <Special>{_.data.name}</Special>
-                        <Special>{_.data.address}</Special>
-                        <Special>{_.data.Product}</Special>
-                        {_.stat === `w`? <Special w>{_.status}</Special> : null}
-                        {_.stat === `s`? <Special s>{_.status}</Special> : null}
-                        {_.stat === `c`? <Special c>{_.status}</Special> : null}
-                        {_.stat === `o`? <Special o>{_.status}</Special> : null}
-                        <Special bt>
-                            
-                                    {res[id].val ? (
-                            <>
-                            <TwoB onClick={() => {
-                                        setFin(fin.map((x) => {
-                                            if (x.id === 1) {
-                                                return {
-                                                    ...x,
-                                                    permit: cancel,
-                                                    stat: 'c',
-                                                    status: 'Cancel'
-                                                }
-                                            } else {return {...x}}
-                                        }))
-                                        setRes(res.map((x) => {
-                                            if(x.id === 1){
-                                                return {
-                                                  ...x ,
-                                                  val:false
-                                                }
-                                              } else {return {...x}}
-                                        })
-                                        )
-                                    }}
-                                        a>Cancel</TwoB>
-                                    <TwoB onClick={() => {
-                                       setFin(fin.map((x) => {
-                                        if (x.id === 1) {
-                                            return {
-                                                ...x,
-                                                permit: approve,
-                                                stat: 's',
-                                                status: 'Complete'
-                                            }
-                                        } else {return {...x}}
-                                    }))
-                                    setRes(res.map((x) => {
-                                        if(x.id === 1){
-                                            return {
-                                              ...x ,
-                                              val:false
-                                            }
-                                          } else {return {...x}}
-                                    })
-                                    )
-                                    }}>Aprove</TwoB>
-                            </>
-                            )
-                                        : <img src={_.permit} alt={`${_.permit}`} />
-                            }
-                        </Special>
-                    </tr>
+                            <tr>
+                            <Special>{count}</Special>
+                            <Special>{_.buyer.fullname}</Special>
+                            <Special>{_.address}</Special>
+                            <Special>{_.product.map((x) => {
+                                return(x.title+',')
+                            })}</Special>
+                            {_.status === `Waiting Approve`? <Special w>{_.status}</Special> : null}
+                            {_.status === `Success`? <Special s>{_.status}</Special> : null}
+                            {_.status === `Cancel`? <Special c>{_.status}</Special> : null}
+                            {_.status === `On The Way`? <Special o>{_.status}</Special> : null}
+                            <Special bt>
+                                {_.status === `Waiting Approve` ?
+                                <>
+                                <TwoB onClick={() => {Cancel(_.id)}}a>Cancel</TwoB>
+                                <TwoB onClick={() => {Approve(_.id)}}>Aprove</TwoB>
+                                </>
+                                : <>
+                                {_.status === `Cancel`? <img src={cancel} alt={`${cancel}`} /> :<img src={approve} alt={`${approve}`} /> }
+                                </> 
+                                }
+                            </Special>
+                            </tr>
                         )
                     })}
-                   
                 </Tab>
             </Wrapper>
         </>

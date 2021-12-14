@@ -17,6 +17,33 @@ export const WrapperYellow = styled.div`
         }
     };
 `
+export const Polyy = styled.div`
+    position:absolute;
+    right:175px;
+    top: 90px;
+    .poly {
+        opacity:0;
+        position:absolute;
+        animation: a 1s ease-out forwards;
+        animation-delay: 0.3s;
+        @keyframes a { 
+        0%{
+            opacity:0;
+            transform: translateX(60px)translateY(0px);
+        }
+        80%{
+            transform: translateX(60px)translateY(0px);
+        }
+        90%{
+            opacity:0.3;
+        }
+        100% {
+            transform: translateX(60px)translateY(-30px);
+            opacity:1;
+        }
+        }
+    }
+`
 export const OneLineFlexTop = styled.div`
    @import url('https://fonts.googleapis.com/css2?family=Shippori+Antique+B1&display=swap');
     padding-top: 27px;
@@ -33,7 +60,25 @@ export const OneLineFlexTop = styled.div`
     /* border:1px solid black; */
     justify-content: space-between;
     align-items: center;
-    .poly {
+    &:hover{
+        p {
+            opacity: 0.5;
+        }
+    }
+    p{
+        background:red;
+        height:15px;
+        width:15px;
+        border-radius: 50%;
+        font-size: 12px;
+        color:white;
+        text-align:center;
+        /* margin-top: 0px; */
+        margin-left: 20px !important;
+        z-index:99 !important;
+        position:absolute !important;
+    }
+    /* .poly {
         opacity:0;
         position:absolute;
         animation: a 1s ease-out forwards;
@@ -54,7 +99,7 @@ export const OneLineFlexTop = styled.div`
             opacity:1;
         }
     }
-    }
+    } */
     button {
         width: 100px;
         height: 30px;
@@ -76,9 +121,11 @@ export const OneLineFlexTop = styled.div`
 export const TextAndPizza = styled.div`
     display:flex;
     position: absolute;
-    width: 966px;
+    max-width: 1066px;
     height: 393px;
-    bottom: 40px;
+    padding-left:20px;
+    padding-right:20px;
+    bottom: 60px;
     /* border:1px solid black; */
 `
 export const Text = styled.div`
@@ -141,6 +188,8 @@ export const WrapFlex2 = styled.div`
     display:flex;
     flex-direction: row;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap:1rem;
     margin-bottom: 91px;
     .nonee{
         text-decoration: none !important;
@@ -149,6 +198,8 @@ export const WrapFlex2 = styled.div`
 export const WrapFlex3 = styled.div`
     display:flex;
     flex-direction: row;
+    flex-wrap: wrap;
+    gap:1rem;
     justify-content: space-between;
 `
 export const WrapMain = styled.div`
@@ -174,7 +225,7 @@ export const CardResto = styled.div`
     border-radius: 5px;
     display:flex;
     align-items: center;
-    
+
     h2 {
         font-family: Abhaya Libre ExtraBold;
         font-style: normal;

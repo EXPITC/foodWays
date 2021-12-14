@@ -7,9 +7,12 @@ export const Wrapper = styled.div`
     display: flex;
     justify-content: space-between;
     margin-top: 73px;
+    gap:1rem;
+    flex-wrap: wrap;
 `
 export const FlexCollum = styled.div`
     display:flex;
+    gap:1rem;
     flex-direction: column;
     /* border:1px solid black; */
     ${props => props.btwn ? 'justify-content: space-between;' : null}
@@ -57,14 +60,14 @@ export const Buttons = styled.div`
         border:none;
         width: 112px !important;
         height: 19px !important;
-        background: #E6FFF2 !important;
+        background: ${props => props.c ? '#f23535!important;' : '#E6FFF2!important;'}
         border-radius: 2px !important;
         font-family: 'Montserrat', sans-serif;
         text-align: center !important;
         padding-top: 3px;
         line-height: 14px;
         font-size: 10px !important;
-        color: #00FF47 !important;
+        color: ${props => props.c ? '#ffFF!important;': '#00FF47!important;'}
         margin-left:10%;
 `
 export const Pp = styled.p`
@@ -83,6 +86,11 @@ export const Flex = styled.div`
     display:flex;
     
     ${props => props.w ?
-    ('width: 419px; height: 101px;background: #FFFFFF;padding:16px 20px;justify-content: space-between;')
+    (`
+    width:419px;
+     min-height: 101px;
+     background: #FFFFFF;
+     padding:16px 20px;
+     justify-content: space-between;`)
     : null}
 `

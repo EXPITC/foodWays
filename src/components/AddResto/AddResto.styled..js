@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
-export const Wrapper = styled.div`
-    /* border:1px solid black; */
-    width:84.8%;
+
+export const Wrappper = styled.div`
+       width:84.8%;
     margin:0 auto;
     margin-top: 73px;
     h1 {
@@ -68,31 +68,7 @@ export const Wrapper = styled.div`
     }
 `
 
-export const WrapperMain = styled.form`
-    margin-top:40px;
-    width:100%;
-    button{
-        float:right;
-        background: #433434;
-        border-radius: 5px;
-        border:0;
-        width: 260px;
-        height: 40px;
-        font-family: 'Montserrat', sans-serif;
-        font-weight: bold;
-        font-size: 14px;
-        line-height: 17px;
-        color:white;
-        &:hover{
-            background: none;
-            border:2px solid #433434;
-            color:#433434;
-        }
-    }
-
-`
-
-export const Flex = styled.div` 
+export const Flexx = styled.div` 
     display:flex;
     ${props => props.btwn ? `
     justify-content:space-between;

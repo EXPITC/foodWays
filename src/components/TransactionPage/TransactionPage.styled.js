@@ -4,7 +4,8 @@ export const Wrapper = styled.div`
     margin:0 auto;
     margin-top: 73px;
     /* border:1px solid black; */
-    width: 80%;
+    max-width: 80%;
+    width:100%;
     h1 {
         font-size: 36px;
         line-height: 42px;
@@ -33,7 +34,8 @@ export const Head = styled.th`
     ${props => props.n2 ? 'min-width:183px': null};
     ${props => props.a ? ' min-width:280px': null};
     ${props => props.p ? ' min-width:191px': null};
-    ${props => props.s ? ' min-width:160px': null};
+    ${props => props.s ? ' min-width:160px' : null};
+    width:100%;
     font-family: 'Montserrat', sans-serif;
     text-align: ${props => props.m ? 'center' : 'left'};
 `
@@ -62,7 +64,8 @@ export const TwoB = styled.button`
     border:none;
     color:white;
     background: ${props => props.a ? '#FF0742 !important' : '#0ACF83 !important'};
-    width: 80px;
+    max-width: 80px;
+    width:100%;
     height: 20px;
     border-radius: 5px;
     &:hover{

@@ -24,6 +24,7 @@ export const WrapContent = styled.div`
     width: 100%;
     height: 47px;
     display:flex;
+    gap:1rem;
     justify-content: space-between;
     button {
         @import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&family=Shippori+Antique+B1&display=swap');
@@ -61,13 +62,19 @@ export const WrapContent = styled.div`
 `
 export const WrapOrder = styled.div`
     display:flex;
+    /* border:1px solid black; */
+    justify-content: space-between;
     width: 100%;
+    gap:1rem;
     height:433px;
     .over {
         padding-right: 10px;
+        /* border:1px solid black; */
         overflow-x: hidden;
         overflow-y: auto;
-        max-height: 433px;
+        max-width: 660px;
+        width:100%;
+        height: 433px;
         &::-webkit-scrollbar-track
         {
             box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
@@ -98,6 +105,7 @@ export const WrapOrder2 = styled.table`
 export const Flex = styled.td`
     display:flex;
     max-width: 660px;
+    width:100%;
     height: 119px;
     border-bottom: 0.1mm  solid black;
     border-top: 0.1mm solid black;
@@ -117,8 +125,22 @@ export const Wrap2 = styled.div`
     display:flex;
     flex-direction: column;
     /* border:1px solid black; */
-    width: 567px;
+    width: 550px;
+    /* width:100%; */
+    @media only screen and (max-width: 1000px) {
+        width:450px;
+    }
+    @media only screen and (max-width: 800px) {
+        width:350px;
+    }
+    @media only screen and (max-width: 700px) {
+        width:250px;
+    }
+    @media only screen and (max-width: 600px) {
+        width:100%;
+    }
     height:80px;
+    justify-content: space-between;
 `
 export const Wrap3 = styled.div`
     flex:100%;
@@ -128,6 +150,7 @@ export const Wrap3 = styled.div`
     display:flex;
     padding-top: 10px;
     align-items: center;
+    gap:1rem;
     justify-content: space-between;
     p {
         padding-bottom: 10px;
@@ -140,6 +163,7 @@ export const Wrap3 = styled.div`
         background: none;
         border: none;
         color:#4F3D31;
+        cursor: pointer;
         img {
             height:25px;
             width:12px;
@@ -166,7 +190,6 @@ export const FlexCollum = styled.div`
     display:flex;
     flex-direction: column;
     width: 30%;
-    margin-left: 35px;
     tb {
         display:flex;
         flex-direction: column;
