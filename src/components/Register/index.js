@@ -79,7 +79,7 @@ const Register = ({ showR, Cancel, toggle }) => {
                   onChange={handelChange}
                 />
                 <input
-                  type="password"
+                  type="pas"
                   name="password"
                   placeholder="Password"
                   onChange={handelChange}

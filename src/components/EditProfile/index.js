@@ -1,4 +1,4 @@
-import { React, useState, useContext, useEffect } from "react";
+import { React, useState, useContext, useEffect, useCallback } from "react";
 
 import Header from "../Header";
 import Clip from "../../img/clip.svg";
@@ -29,36 +29,40 @@ const EditProfile = ({ _U }) => {
   let [pre, setPre] = useState(user?.image === null ? Clip : user.image);
   const [form, setForm] = useState({
     fullname: user.fullname,
-    image: user.image,
     email: user.email,
     phone: user.phone,
     location: user.location,
   });
 
   const [response, setResponse] = useState(null);
-  const [loc, setLoc] = useState(user.location?.split(" "));
+  const [loc, setLoc] = useState(user?.location?.split(" ") || []);
 
   useEffect(() => {
-    if (loc) {
-      try {
-        axios
-          .get(
-            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc[0]}&lon=${loc[1]}`
-          )
-          .then((res) => {
-            setResponse(res.data);
-          });
-        setForm({
-          ...form,
-          location: loc[0] + " " + loc[1],
-        });
-      } catch (err) {
-        console.log(err);
-      }
+    if (typeof loc[0] !== "undefined" && typeof loc[1] !== "undefined") {
+      (async () => {
+        try {
+          await axios
+            .get(
+              `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc[0]}&lon=${loc[1]}`
+            )
+            .then((res) => {
+              setResponse(res.data);
+            });
+          setForm((prev) => ({
+            ...prev,
+            location: loc[0] + " " + loc[1],
+          }));
+        } catch (err) {
+          console.log(err.msg);
+        }
+      })();
     }
-  }, [loc, form]);
+  }, [loc]);
+
+  console.log(form);
 
   const handleChange = (e) => {
+    console.log("WTF not get exec");
     setForm({
       ...form,
       [e.target.name]:
@@ -73,38 +77,50 @@ const EditProfile = ({ _U }) => {
     }
     console.log(form);
   };
+
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
-      const config = {
-        headers: {
-          "Content-Type": "multipart/form-data",
+
+      let config = {
+        Header: {
+          "Content-Type": "application/json",
         },
       };
-      // const config2 = {
-      //     headers: {
-      //         'Content-Type': 'application/json'
-      //     }
-      // }
-      const formData = new FormData();
+      let apiPath = "/userData";
+      let formData = form;
+
+      // if user update image form will be field with new field image
       if (form.image) {
+        apiPath = "/user";
+        config = {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        };
+
+        formData = new FormData();
         formData.set("image", form?.image[0], form?.image[0]?.name);
-      } else formData.set("image", form.image);
-      formData.set("fullname", form.fullname);
-      formData.set("email", form.email);
-      formData.set("phone", form.phone);
-      formData.set("location", form.location);
-      await API.patch("/user", formData, config);
+        formData.set("fullname", form.fullname);
+        formData.set("email", form.email);
+        formData.set("phone", form.phone);
+        formData.set("location", form.location);
+      }
+
+      await API.patch(apiPath, formData, config);
+
       const response = await API.get("/login");
-      await dispatch({
+      dispatch({
         status: "login",
         payload: response.data,
       });
+
       navigate("/Profile");
     } catch (err) {
       handleError(err);
     }
   };
+
   return (
     <>
       {showMap ? <Map toggle={toggle} setLocEdit={setLoc} /> : null}

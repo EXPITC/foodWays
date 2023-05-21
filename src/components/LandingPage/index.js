@@ -1,4 +1,11 @@
-import { React, useState, useContext, useEffect, useCallback } from "react";
+import {
+  React,
+  useState,
+  useContext,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import { Link } from "react-router-dom";
 import { API, handleError } from "../../config/api";
 
@@ -30,6 +37,7 @@ import {
 } from "./LandingPage.styled";
 
 import { UserContext } from "../../Context/userContext";
+import { Control } from "mapbox-gl";
 
 // TC~Dummy
 // const resto = [
@@ -99,34 +107,39 @@ const LandingPage = ({ U, sett, setf }) => {
 
   const { state, _dispatch } = useContext(UserContext);
   const { isLogin, user } = state;
-  let which = true;
-  if (user.role === "owner") {
-    which = false;
-  }
 
-  // gathering total order
-  const [total, setTotal] = useState(null);
+  const isCustomer = useMemo(() => {
+    if (user?.role === "owner") return false;
+    return true;
+  }, [user?.role]);
+
+  const [nears, setNears] = useState([]);
+  const [restos, setRestos] = useState([]);
+  const [total, setTotal] = useState(0);
+
+  // Gathering total order, resto data, and near resto
   useEffect(() => {
+    const controller = new AbortController();
     (async () => {
       await API.get("/order/count")
         .then((res) => setTotal(res.data.total))
         .catch((err) => handleError(err));
-    })();
-  }, []);
-
-  // gathering resto data
-  const [restos, setRestos] = useState([]);
-  useEffect(() => {
-    (async () => {
+      await API.get("/nearResto")
+        .then((res) => setNears(res.data.data.nearResto))
+        .catch((err) => {
+          setNears(null);
+          handleError(err);
+        });
       await API.get("/restos").then((res) => {
         setRestos(res.data.data.restos);
       });
     })();
+    return () => controller.abort();
   }, []);
 
   return (
     <>
-      {isLogin ? null : (
+      {!isLogin && (
         <>
           <Login show={show} Cancel={CancelL} toggle={toggleR} />
           <Register showR={showR} Cancel={Cancel} toggle={toggle} />
@@ -139,12 +152,12 @@ const LandingPage = ({ U, sett, setf }) => {
           <div>
             {isLogin ? (
               <>
-                {which ? (
-                  <Link to="/Cart">
-                    {total && <p>{total}</p>}
+                {isCustomer && (
+                  <Link to={total !== 0 ? "/cart" : "/resto"}>
+                    {total !== 0 && <p>{total}</p>}
                     <ImgTrolly src={Trolly} onClick={sett} alt="Trolly" />
                   </Link>
-                ) : null}
+                )}
                 <ImgProfile src={user.image} onClick={drops} alt="Profile" />
 
                 {drop && (
@@ -189,9 +202,9 @@ const LandingPage = ({ U, sett, setf }) => {
         <h1>Popular Restaurant</h1>
         <WrapFlex2>
           {/* TODO: REPEAT */}
-          {restos.map((resto) => {
+          {restos.map((resto, index) => {
             return (
-              <Link to={`/Resto/${resto.id}`} className="nonee">
+              <Link to={`/Resto/${resto.id}`} className="nonee" key={index}>
                 <CardResto key={resto.title}>
                   <img src={resto.img} alt={resto.name} />
                   <h2>{resto.title}</h2>
@@ -202,16 +215,30 @@ const LandingPage = ({ U, sett, setf }) => {
         </WrapFlex2>
         <h1>Restaurant Near You</h1>
         <WrapFlex3>
+          {!nears ? (
+            <h3>Please update your location.</h3>
+          ) : (
+            <>
+              {nears.map((near, index) => {
+                return near.menu.map((menu) => {
+                  return (
+                    <Link
+                      to={`/Resto/${near.resto.id}`}
+                      className="nonee"
+                      key={index + menu.title}
+                    >
+                      <CardNear>
+                        <img src={menu.img} alt={menu.title} />
+                        <h3>{menu.title}</h3>
+                        <p>{near.distance}</p>
+                      </CardNear>
+                    </Link>
+                  );
+                });
+              })}
+            </>
+          )}
           {/* TODO: REPEAT */}
-          {near.map((near) => {
-            return (
-              <CardNear key={near.food}>
-                <img src={near.img} alt={near.food} />
-                <h3>{near.food}</h3>
-                <p>{near.distance}</p>
-              </CardNear>
-            );
-          })}
         </WrapFlex3>
       </WrapMain>
     </>

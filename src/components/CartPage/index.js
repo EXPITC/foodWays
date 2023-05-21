@@ -1,8 +1,15 @@
-import { React, useState, useEffect, useContext, useCallback } from "react";
+import {
+  React,
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+  useMemo,
+} from "react";
 import { API, handleError } from "../../config/api";
 import convertRupiah from "rupiah-format";
 import { UserContext } from "../../Context/userContext";
-import { io } from "socket.io-client";
+import socketIo from "../../utils/socket";
 
 import {
   Wrapper,
@@ -25,58 +32,74 @@ import Header from "../Header";
 import Map from "../Map";
 import { useNavigate } from "react-router";
 
-let socket;
 const CartPage = () => {
   const [open, setOpen] = useState(false);
   const openMap = () => setOpen(!open);
   const [far, setFar] = useState(false);
-  const openMapFar = useCallback(() => setFar(!far), [far]);
+  const handleMapFar = useCallback(() => setFar(!far), [far]);
   const [orderMap, setOrderMap] = useState(false);
   const navigate = useNavigate();
 
   const { state, dispatch } = useContext(UserContext);
   const { user } = state;
+  const socket = socketIo(user?.id);
 
   const [form, setForm] = useState({
     location: user.location,
   });
 
-  const [total, letTotal] = useState(null);
+  const [total, setTotal] = useState(0);
   const [orders, setOrders] = useState([]);
   const [resto, setResto] = useState();
+
+  // back when order got deleted or zero val
+  if (total === 0) {
+    resto?.id === undefined
+      ? navigate(`/resto`)
+      : navigate(`/resto/${resto.id}`);
+  }
+
   const [transaction, setTransaction] = useState(null);
+  const transactionIdle = useMemo(
+    () =>
+      transaction?.status === "Waiting Approve" ||
+      transaction?.status === "On The Way",
+    [transaction]
+  );
   const [address, setAddress] = useState(null);
   const [loc, setLoc] = useState(user.location?.split(" "));
   const [refresh, setReresh] = useState(false);
 
+  const updateTransaction = async () => {
+    await API.get("/order/count")
+      .then((res) => setTotal(res.data.total))
+      .catch((err) => handleError(err));
+    await API.get("/transaction/idle")
+      .then((res) => {
+        setOrders(res.data.data.transactions[0].product);
+        setTransaction(res.data.data.transactions[0]);
+      })
+      .catch((err) => handleError(err));
+  };
+
   useEffect(() => {
+    let controller = new AbortController();
+    updateTransaction();
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    if (!transaction?.sellerId) return;
+    let controller = new AbortController();
     (async () => {
-      await API.get("/order/count")
-        .then((res) => letTotal(res.data.total))
-        .catch((err) => handleError(err));
-      await API.get("/transaction/active")
-        .then((res) => {
-          setOrders(res.data.data.transactions[0].product);
-          setTransaction(res.data.data.transactions[0]);
-        })
+      await API.get(`/resto/user/${transaction.sellerId}`)
+        .then((res) => setResto(res?.data?.data?.resto))
         .catch((err) => handleError(err));
     })();
-  }, [refresh]);
+    return () => controller.abort();
+  }, [transaction?.sellerId]);
 
-  const start = transaction?.seller.location.split(" ");
-  useEffect(() => {
-    (async () => {
-      await API.get(`/last/resto/${transaction?.sellerId}`)
-        .then((res) => setResto(res?.data?.data))
-        .catch((err) => handleError(err));
-    })();
-  }, [transaction]);
-
-  // console.log('////////////////////')
-  // console.log(order)
-  // console.log(transaction?.sellerId)
-  // console.log(resto)
-  // console.log('////////////////////')
+  const start = useMemo(() => resto?.loc?.split(" "), [resto?.loc]);
 
   useEffect(() => {
     if (
@@ -90,16 +113,10 @@ const CartPage = () => {
   }, [transaction]);
 
   useEffect(() => {
-    socket = io("http://localhost:5000", {
-      auth: {
-        token: localStorage.getItem("token"),
-      },
-      query: {
-        id: state.user.id,
-      },
-    });
+    if (!user?.id) return;
+
     socket.on("connect", () => {
-      console.log(socket);
+      console.log(socket.connected);
     });
     socket.on("connect_error", (err) => {
       console.error(err.message);
@@ -107,12 +124,12 @@ const CartPage = () => {
     return () => {
       socket.disconnect();
     };
-  }, [state.user.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   const handleOrder = useCallback(() => {
+    if (!transaction?.id || !resto?.id || !address?.display_name) return;
     (async () => {
-      socket.emit("new transaction", 12);
-      socket.emit("order", transaction.id);
       const config = {
         headers: {
           "Content-Type": "application/json",
@@ -123,56 +140,62 @@ const CartPage = () => {
         { address: address.display_name.split(",")[0] },
         config
       );
+
+      socket.emit("order", transaction.id);
+      socket.emit("joinRoomOrder", { restoId: resto.id });
+      socket.emit("newOrder", resto.id);
+      socket.emit("leaveRoomOrder", { restoId: resto.id });
+
+      updateTransaction();
       setOrderMap(true);
     })();
-  }, [address.display_name, transaction.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transaction?.id, resto?.id, address?.display_name]);
 
   const handleConfirm = useCallback(() => {
-    socket.emit("new transaction", 12);
-    socket.emit("confirm", transaction.id);
-    setOrderMap(true);
-    openMapFar();
-    // console.log('|\\\|\|\\\||')
-    // console.log()
-    navigate(`/profile`);
-  }, [navigate, openMapFar, transaction.id]);
+    if (!transaction?.id || !resto?.id) return;
 
-  const orderDelete = useCallback(
-    (id) => {
-      (async () => {
-        try {
-          // console.log(id);
-          const res = await API.delete(`/order/${id}`);
-          console.log(res);
-          setReresh(!refresh);
-        } catch (err) {
-          handleError(err);
-        }
-      })();
-    },
-    [refresh]
-  );
+    socket.emit("confirm", transaction.id);
+    socket.emit("joinRoomOrder", { restoId: resto.id });
+    socket.emit("newOrder", resto.id);
+    socket.emit("leaveRoomOrder", { restoId: resto.id });
+    setOrderMap(true);
+    handleMapFar();
+
+    navigate(`/profile`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleMapFar, transaction?.id, resto?.id]);
+
+  const orderDelete = async (id) => {
+    try {
+      const res = await API.delete(`/order/${id}`);
+      if (!res) return;
+      updateTransaction();
+    } catch (err) {
+      handleError(err);
+    }
+  };
 
   useEffect(() => {
+    if (!loc) return;
+    let controller = new AbortController();
     (async () => {
-      if (loc) {
-        try {
-          await API.get(
-            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc[0]}&lon=${loc[1]}`
-          ).then((res) => {
-            setAddress(res.data);
-          });
-          setForm({
-            ...form,
-            location: loc[0] + " " + loc[1],
-          });
-          // console.log*
-        } catch (err) {
-          console.log(err);
-        }
+      try {
+        await API.get(
+          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc[0]}&lon=${loc[1]}`
+        ).then((res) => {
+          setAddress(res.data);
+        });
+        setForm((prev) => ({
+          ...prev,
+          location: loc[0] + " " + loc[1],
+        }));
+      } catch (err) {
+        console.error(err);
       }
     })();
-  }, [loc, form]);
+    return () => controller.abort();
+  }, [loc]);
 
   const updateloc = useCallback(() => {
     (async () => {
@@ -184,7 +207,8 @@ const CartPage = () => {
         };
         await API.patch("/userData", form, config);
         const response = await API.get("/login");
-        await dispatch({
+        if (!response) return;
+        dispatch({
           status: "login",
           payload: response.data,
         });
@@ -193,10 +217,10 @@ const CartPage = () => {
       }
     })();
   }, [dispatch, form]);
-  // console.log(transaction.id)
 
   const addHandle = useCallback(
     (id) => {
+      if (!transaction?.id) return;
       (async () => {
         try {
           const config = {
@@ -210,19 +234,19 @@ const CartPage = () => {
             qty: 1,
           };
           res = JSON.stringify(res);
-          console.log(res);
           await API.post("/add/order", res, config);
-          setReresh(!refresh);
+          updateTransaction();
         } catch (err) {
           handleError(err);
         }
       })();
     },
-    [refresh, transaction.id]
+    [transaction?.id]
   );
 
   const lessHandle = useCallback(
     (id) => {
+      if (!transaction?.id) return;
       (async () => {
         try {
           const config = {
@@ -237,18 +261,18 @@ const CartPage = () => {
           };
           res = JSON.stringify(res);
           await API.post("/less/order", res, config);
-          setReresh(!refresh);
+          updateTransaction();
         } catch (err) {
           handleError(err);
         }
       })();
     },
-    [refresh, transaction.id]
+    [transaction?.id]
   );
 
   return (
     <>
-      {open ? (
+      {open && (
         <Map
           toggle={openMap}
           setLocEdit={setLoc}
@@ -256,11 +280,11 @@ const CartPage = () => {
           open
           cart
         />
-      ) : null}
-      {far ? <Map toggle={handleConfirm} startLoc={start} far /> : null}
-      <Header trigger={refresh} />
+      )}
+      {far && <Map toggle={handleConfirm} startLoc={start} far />}
+      <Header trigger={transaction} />
       <Wrapper>
-        <h1>{resto?.resto?.title}, Menus</h1>
+        <h1>{resto?.title}, Menus</h1>
         <h2>Delivery Location</h2>
         <WrapContent>
           <div>
@@ -275,11 +299,12 @@ const CartPage = () => {
           <div className="over">
             <WrapOrder2>
               {/* TC~REPEAT */}
-              {total === 0
-                ? resto?.resto?.id === undefined
-                  ? navigate(`/resto`)
-                  : navigate(`/resto/${resto.resto.id}`)
-                : null}
+              {
+                // total === 0 &&
+                // (resto?.id === undefined
+                //   ? navigate(`/resto`)
+                //   : navigate(`/resto/${resto.id}`))
+              }
               {orders.map((order, index) => {
                 return (
                   <Flex key={order.id + index}>
@@ -296,29 +321,36 @@ const CartPage = () => {
                         </Wrap3>
                         <Wrap3>
                           <div>
-                            <button
-                              onClick={() => {
-                                lessHandle(order.id);
-                              }}
-                            >
-                              <img src={min} alt="min" />
-                            </button>
+                            {!transactionIdle && (
+                              <button
+                                onClick={() => {
+                                  lessHandle(order.id);
+                                }}
+                              >
+                                <img src={min} alt="min" />
+                              </button>
+                            )}
+
                             <h4 className="pinkBg">{order.order.qty}</h4>
+                            {!transactionIdle && (
+                              <button
+                                onClick={() => {
+                                  addHandle(order.id);
+                                }}
+                              >
+                                <img src={plus} alt="plus" />
+                              </button>
+                            )}
+                          </div>
+                          {!transactionIdle && (
                             <button
                               onClick={() => {
-                                addHandle(order.id);
+                                orderDelete(order.order.id);
                               }}
                             >
-                              <img src={plus} alt="plus" />
+                              <img src={trash} alt="trash" />
                             </button>
-                          </div>
-                          <button
-                            onClick={() => {
-                              orderDelete(order.order.id);
-                            }}
-                          >
-                            <img src={trash} alt="trash" />
-                          </button>
+                          )}
                         </Wrap3>
                       </Wrap2>
                     </Wrap1>
@@ -339,11 +371,11 @@ const CartPage = () => {
               </Wrap3>
               <Wrap3>
                 <Pp>Ongkir</Pp>
-                <Pp r>Rp.10.000</Pp>
+                <Pp r={true}>Rp.10.000</Pp>
               </Wrap3>
             </tb>
             <Wrap1>
-              <Pp r b>
+              <Pp r={true} b={true}>
                 TOTAL
               </Pp>
               <Pp r>{convertRupiah.convert(transaction?.price + 10000)}</Pp>
@@ -352,7 +384,7 @@ const CartPage = () => {
         </WrapOrder>
         <Orderbtn>
           {orderMap ? (
-            <button onClick={openMapFar}>See How Far?</button>
+            <button onClick={handleMapFar}>See How Far?</button>
           ) : (
             <button onClick={handleOrder}>Order</button>
           )}

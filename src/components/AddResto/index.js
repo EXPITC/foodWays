@@ -34,15 +34,15 @@ const AddResto = () => {
           .then((res) => {
             setAddress(res.data.display_name);
           });
-        setForm({
-          ...form,
+        setForm((prev) => ({
+          ...prev,
           loc: loc[0] + " " + loc[1],
-        });
+        }));
       } catch (err) {
         console.log(err);
       }
     }
-  }, [loc, form]);
+  }, [loc]);
   let [pre, setPre] = useState(Clip);
   const handleChange = (e) => {
     setForm({
@@ -107,7 +107,7 @@ const AddResto = () => {
   // };
   return (
     <>
-      {showMap ? <Map toggle={toggle} setLocEdit={setLoc} /> : null}
+      {showMap && <Map toggle={toggle} setLocEdit={setLoc} />}
       <Header />
       <Wrappper>
         <Wrapper>

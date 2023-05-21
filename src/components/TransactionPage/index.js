@@ -1,135 +1,159 @@
 import { React, useState, useEffect, useContext } from "react";
-import { io } from "socket.io-client";
 import Header from "../Header";
 import approve from "../../img/approve.svg";
 import cancel from "../../img/cancel.svg";
 import { Wrapper, Head, Tab, Special, TwoB } from "./TransactionPage.styled";
 import { UserContext } from "../../Context/userContext";
-// import { API, handleError } from "../../config/api";
+import socketIo from "../../utils/socket";
 
-let socket;
 const TransactionPage = () => {
   const { state, _dispatch } = useContext(UserContext);
-  const [refresh, setRefresh] = useState(false);
-  const [transaction, setTransaction] = useState([]);
-  const [firstHolder, setFirstHolder] = useState(false);
+  const [transactions, setTransactions] = useState([]);
+  const socket = socketIo(state.user.id);
+
   useEffect(() => {
-    socket = io("http://localhost:5000", {
-      auth: {
-        token: localStorage.getItem("token"),
-      },
-      query: {
-        id: state.user.id,
-      },
-    });
+    const userId = state?.user?.id;
+    if (!userId) return;
+
+    // connect when not connected
+    if (!socket.connected) socket.connect();
+
     socket.on("connect", () => {
-      console.log(socket);
+      console.log(socket.connected);
+      socket.emit("joinRoomOrder", { userId });
     });
-    // socket.on('new transaction', (x) => {
-    //     console.log(x)
-    //     socket.emit('transaction')
-    //     Transaction()
-    // })
-    if (firstHolder === false) {
-      setFirstHolder(true);
-    }
-    socket.emit("transaction");
+    socket.on("disconnect", (reason) => {
+      // reconnect when disconnect
+      if (reason === "io server disconnect") socket.connect();
+    });
+
+    socket.on("newOrder", () => {
+      socket.emit("transactions");
+      socket.on("transactionsData", (value) => {
+        setTransactions(value);
+      });
+    });
+
     socket.on("connect_error", (err) => {
       console.error(err.message);
     });
-    Transaction();
+
     return () => {
+      socket.off("connect", console.log(socket.connected));
+      socket.off("disconnect", console.log(socket.connected));
+      socket.on("leaveRoomOrder", { userId });
       socket.disconnect();
     };
-  }, [transaction, firstHolder, state.user.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state?.user?.id]);
 
-  const Approve = (x) => {
-    socket.emit("otw");
-    socket.emit("accept", x);
-    setRefresh(!refresh);
-  };
-  const Cancel = (x) => {
-    socket.emit("cancel", x);
-    setRefresh(!refresh);
-  };
-  const Transaction = () => {
-    socket.on("transactionData", (data) => {
-      setTransaction(data);
-      console.log(data);
+  useEffect(() => {
+    // get the transactions value
+    if (!state?.user?.id) return;
+    socket.emit("transactions");
+    socket.on("transactionsData", (value) => {
+      setTransactions(value);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state?.user?.id]);
+
+  const handleApprove = (id) => {
+    // socket.emit("otw");
+    socket.emit("accept", id);
+    // setRefresh(!refresh);
+    socket.on("acceptData", (data) => {
+      if (!data[1][0]) return;
+      setTransactions((prev) => {
+        return prev.map((t) => {
+          if (t?.id === data[1][0]?.id) return { ...t, ...data[1][0] };
+          return t;
+        });
+      });
     });
   };
-  let count = 0;
+  const handleCancel = (id) => {
+    socket.emit("cancel", id);
+    socket.on("cancelData", (data) => {
+      if (!data[1][0]) return;
+      setTransactions((prev) => {
+        return prev.map((t) => {
+          if (t?.id === data[1][0]?.id) return { ...t, ...data[1][0] };
+          return t;
+        });
+      });
+    });
+  };
+
   return (
     <>
       <Header noTroll />
       <Wrapper>
         <h1>Income Transaction</h1>
         <Tab>
-          <tr>
-            <Head n>No</Head>
-            <Head n2>Name</Head>
-            <Head a>Address</Head>
-            <Head p>Products Order</Head>
-            <Head s>Status</Head>
-            <Head m p>
-              Action
-            </Head>
-          </tr>
+          <tbody>
+            <tr>
+              <Head n>No</Head>
+              <Head n2>Name</Head>
+              <Head a>Address</Head>
+              <Head p>Products Order</Head>
+              <Head s>Status</Head>
+              <Head m p>
+                Action
+              </Head>
+            </tr>
+          </tbody>
           {/* TC~REPEAT */}
-          {transaction.map((_) => {
-            count = count + 1;
-            return (
-              <tr>
-                <Special>{count}</Special>
-                <Special>{_.buyer.fullname}</Special>
-                <Special>{_.address}</Special>
-                <Special>
-                  {_.product.map((x) => {
-                    return x.title + ",";
-                  })}
-                </Special>
-                {_.status === `Waiting Approve` ? (
-                  <Special w>{_.status}</Special>
-                ) : null}
-                {_.status === `Success` ? (
-                  <Special s>{_.status}</Special>
-                ) : null}
-                {_.status === `Cancel` ? <Special c>{_.status}</Special> : null}
-                {_.status === `On The Way` ? (
-                  <Special o>{_.status}</Special>
-                ) : null}
-                <Special bt>
-                  {_.status === `Waiting Approve` ? (
-                    <>
-                      <TwoB
-                        onClick={() => {
-                          Cancel(_.id);
-                        }}
-                        a
-                      >
-                        Cancel
-                      </TwoB>
-                      <TwoB
-                        onClick={() => {
-                          Approve(_.id);
-                        }}
-                      >
-                        Aprove
-                      </TwoB>
-                    </>
-                  ) : (
-                    <>
-                      {_.status === `Cancel` ? (
-                        <img src={cancel} alt={`${cancel}`} />
-                      ) : (
-                        <img src={approve} alt={`${approve}`} />
-                      )}
-                    </>
+          <tbody>
+            {transactions?.map((t, index) => {
+              return (
+                <tr key={index}>
+                  <Special>{index + 1}</Special>
+                  <Special>{t.buyer.fullname}</Special>
+                  <Special>{t.address}</Special>
+                  <Special>
+                    {t.product.map((p) => {
+                      return p.title + ",";
+                    })}
+                  </Special>
+                  {t.status === `Waiting Approve` && (
+                    <Special w>{t.status}</Special>
                   )}
-                </Special>
-              </tr>
-            );
-          })}
+                  {t.status === `Success` && <Special s>{t.status}</Special>}
+                  {t.status === `Cancel` && <Special c>{t.status}</Special>}
+                  {t.status === `On The Way` && <Special o>{t.status}</Special>}
+                  <Special bt>
+                    {t.status === `Waiting Approve` ? (
+                      <>
+                        <TwoB
+                          onClick={() => {
+                            handleCancel(t.id);
+                          }}
+                          a
+                        >
+                          Cancel
+                        </TwoB>
+                        <TwoB
+                          onClick={() => {
+                            handleApprove(t.id);
+                          }}
+                        >
+                          Aprove
+                        </TwoB>
+                      </>
+                    ) : (
+                      <>
+                        {t.status === `Cancel` ? (
+                          <img src={cancel} alt={`${cancel}`} />
+                        ) : (
+                          <img src={approve} alt={`${approve}`} />
+                        )}
+                      </>
+                    )}
+                  </Special>
+                </tr>
+              );
+            })}
+          </tbody>
         </Tab>
       </Wrapper>
     </>

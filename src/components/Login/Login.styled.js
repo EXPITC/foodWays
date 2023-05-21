@@ -71,7 +71,7 @@ export const Wrapper = styled.div`
     gap: 0.3rem;
   }
   form input {
-    @import url("https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&family=Shippori+Antique+B1&display=swap");
+    /* @import url("https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&family=Shippori+Antique+B1&display=swap"); */
     font-family: "Shippori Antique B1", sans-serif;
     margin-bottom: 20px;
     /* background-color: transparent; */
@@ -87,14 +87,14 @@ export const Wrapper = styled.div`
     color: #433434;
   }
   form input::placeholder {
-    @import url("https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&family=Shippori+Antique+B1&display=swap");
+    /* @import url("https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&family=Shippori+Antique+B1&display=swap"); */
     font-family: "Shippori Antique B1", sans-serif;
     text-align: left;
     color: #b1b1b1;
     font-size: 18px;
   }
   h2 {
-    @import url("https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&family=Shippori+Antique+B1&display=swap");
+    /* @import url("https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&family=Shippori+Antique+B1&display=swap"); */
     font-family: "Shippori Antique B1", sans-serif;
     font-style: normal;
     font-weight: 900;

@@ -22,29 +22,41 @@ const Header = ({ trigger, noTroll }) => {
     [user.role]
   );
 
-  const [total, letTotal] = useState(null);
+  const [total, letTotal] = useState(0);
   useEffect(() => {
+    let controller = new AbortController();
     (async () => {
       await API.get("/order/count")
         .then((res) => letTotal(res.data.total))
         .catch((err) => handleError(err));
     })();
+    return () => controller.abort();
   }, [trigger]);
 
-  // const [restoId, setRestoId] = useState(null);
-  // const [resto, setResto] = useState(null);
-  // useEffect(() => {
-  //   (async () => {
-  //     await API.get(`/resto`)
-  //       .then((res) => {
-  //         setResto(res.data.data.resto.data);
-  //       })
-  //       .catch((err) => {
-  //         handleError(err);
-  //       });
-  //   })();
-  // }, []);
-  // console.log(resto);
+  // const [restoId, setRestoId] = useState("");
+  const [resto, setResto] = useState(null);
+  const restoId = useMemo(() => {
+    if (resto?.id) {
+      return resto.id;
+    } else {
+      return "";
+    }
+  }, [resto]);
+  useEffect(() => {
+    let controller = new AbortController();
+    (async () => {
+      await API.get(`/resto`)
+        .then((res) => {
+          setResto(res.data.data.resto.data);
+        })
+        .catch((err) => {
+          handleError(err);
+        });
+    })();
+    return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <Head>
@@ -54,7 +66,7 @@ const Header = ({ trigger, noTroll }) => {
           </Link>
           <Wrap>
             {isOwner ? (
-              <Link className="cart" to="/Resto">
+              <Link className="cart" to={`/Resto/${restoId}`}>
                 <img
                   style={{ width: "50px", height: "50px" }}
                   src={Shop}
@@ -63,8 +75,8 @@ const Header = ({ trigger, noTroll }) => {
               </Link>
             ) : noTroll ? null : (
               <>
-                {total ? <p>{total}</p> : null}
-                <Link className="cart" to="/Cart">
+                {total !== 0 && <p>{total}</p>}
+                <Link className="cart" to={total !== 0 ? "/cart" : "/resto"}>
                   <img src={Trolly} alt="trolly" />
                 </Link>
               </>

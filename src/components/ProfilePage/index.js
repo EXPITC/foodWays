@@ -39,7 +39,7 @@ const ProfilePage = () => {
   ];
 
   useEffect(() => {
-    socket = io("http://localhost:5000", {
+    socket = io("http://localhost:5001", {
       auth: {
         token: localStorage.getItem("token"),
       },

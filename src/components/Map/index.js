@@ -1,72 +1,68 @@
 import { React, useState, useEffect, useContext, useMemo } from "react";
-import ReactMapGL, { Marker, Layer } from "react-map-gl";
+import ReactMapGL, { Marker, Layer, Source } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { UserContext } from "../../Context/userContext";
 import { API, handleError } from "../../config/api";
-import { io } from "socket.io-client";
 
 import close from "../../img/close.png";
 import maponloc from "../../img/onloc.svg";
 import { Wrapper, Bg, Card } from "./Map.styled";
+import socketIo from "../../utils/socket";
 
-// https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=?&lon=?
-let socket;
-const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, open, cart }) => {
-  const [viewport, setViewport] = useState({});
-  // console.log(far);
+function toMinutes(n) {
+  let m = Math.floor((n % 3600) / 60)
+    .toString()
+    .padStart(2, "0");
+  let s = Math.floor(n % 60)
+    .toString()
+    .padStart(2, "0");
+  return m + ":" + s;
+}
+const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
+  const [viewState, setViewState] = useState(false);
   const { state, _dispatch } = useContext(UserContext);
   const { user } = state;
-  // const [loc, setLoc] = useState(user.location?.split(' '))
-  // let hold2 = open
-  let end = useMemo(() => {
-    if (user?.location) {
-      const endPoint = user.location.split(" ");
-      return [endPoint[1], endPoint[0]];
-    }
-    return [0, 0];
-  }, [user]);
+  const socket = socketIo(user?.id);
+  const yogyaLatLong = [-7.780888853879075, 110.38593679008736];
 
-  // if (hold2){
-  // } else {
-  //   end = [10.81273,-7.81623]
-  // }
-  let start = useMemo(() => {
-    if (startLoc) {
-      return [parseFloat(startLoc[1]), parseFloat(startLoc[0])];
-    }
-    if (user?.location) {
-      return user.location.split(" ");
-    }
-    return [0, 0];
-  }, [user, startLoc]);
-  // console.log(startLoc);
-  // console.log(start);
-  // let hold = startLoc;
-  // if (hold) {
-  //   start = [parseFloat(startLoc[1]), parseFloat(startLoc[0])];
-  // }
-  // console.log(start);
-  // hold ? start = [start[1], start[0]] : start = [0, 1]
-  // let start = [startLoc[1],startLoc[0]]
+  const end = useMemo(() => {
+    if (!user?.location) return yogyaLatLong;
+
+    const endPoint = user.location.split(" ");
+    return [parseFloat(endPoint[1]), parseFloat(endPoint[0])];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.location]);
+
+  const start = useMemo(() => {
+    if (startLoc) return [parseFloat(startLoc[1]), parseFloat(startLoc[0])];
+    //
+    if (!user?.location) return yogyaLatLong;
+
+    const starPoint = user.location.split(" ");
+    return [parseFloat(starPoint[1]), parseFloat(starPoint[0])];
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startLoc, user?.location]);
+
   useEffect(() => {
-    setTimeout(() => {
-      setViewport({
-        latitude: -7.7931344997599465,
-        longitude: 110.37100225029263,
+    const timeout = setTimeout(() => {
+      setViewState({
+        latitude: -7.780888853879075,
+        longitude: 110.38593679008736,
         width: "100%",
         height: "100%",
         zoom: 11,
       });
     }, 1000);
+    return () => clearTimeout(timeout);
   }, []);
-  const [routeLayer, setRouteLayer] = useState({});
+
   const [address, setAddress] = useState();
-  const [form, setForm] = useState({
-    location: user.location,
-  });
-  let [loc, setLoc] = useState(false);
-  // console.log(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${end[1]}&lon=${end[0]}`)
+
+  const [loc, setLoc] = useState(false);
+
   useEffect(() => {
+    let controller = new AbortController();
     (async () => {
       if (far) {
         try {
@@ -75,17 +71,13 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, open, cart }) => {
           ).then((res) => {
             setAddress(res?.data);
           });
-          setForm({
-            ...form,
-            location: loc[0] + " " + loc[1],
-          });
         } catch (err) {
           console.error(err);
         }
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    return () => controller.abort();
+  }, [end, far, loc]);
 
   async function getAddress(lat, lon) {
     API.get(
@@ -98,39 +90,43 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, open, cart }) => {
         handleError(err);
       });
   }
-  // console.log(address);
+
   const nameAddress = useMemo(() => {
     if (address?.display_name) {
       return address.display_name.split(",");
     }
+    return [];
   }, [address]);
 
-  const [data, setData] = useState();
+  const [duration, setDuration] = useState(0);
+  const [routeLayer, setRouteLayer] = useState(false);
 
-  // console.log(`https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`)
   useEffect(() => {
-    // getRoute with end
+    let controller = new AbortController();
+    // Get route with end
     (async () => {
       // make a directions request using cycling profile
       // an arbitrary start will always be the same
       // only the end or destination will change
       try {
-        const query = await fetch(
-          `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`,
-          { method: "GET" }
-        );
-        const json = await query.json();
-        console.log(json);
-        const data = await json.routes[0];
-        setData(data);
+        // const direction_api = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`;
+        const direction_api2 = `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]}%2C${start[1]}%3B${end[0]}%2C${end[1]}?alternatives=false&exclude=toll%2Cferry%2Cunpaved%2Ccash_only_tolls&geometries=geojson&language=en&overview=full&steps=true&access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`;
+
+        const response = await fetch(direction_api2);
+        let data = await response.json();
+        data = data.routes[0];
+
+        setDuration(data?.duration);
         const route = data.geometry.coordinates;
         const geojson = {
           type: "Feature",
+          properties: {},
           geometry: {
             type: "LineString",
             coordinates: route,
           },
         };
+
         setRouteLayer({
           id: "route",
           type: "line",
@@ -152,8 +148,7 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, open, cart }) => {
         handleError(err);
       }
     })();
-
-    // getRoute(end);
+    return () => controller.abort();
   }, [end, start]);
 
   const startLayer = useMemo(
@@ -211,61 +206,32 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, open, cart }) => {
     }),
     [end]
   );
-  // const [val, setVal] = useState(false);
-  // const mapRef = useRef()
-  const doit = () => {
-    // setVal(false);
-    setTimeout(() => {
-      toggle();
-    }, 100);
-  };
-  function toMinutes(e) {
-    let m = Math.floor((e % 3600) / 60)
-      .toString()
-      .padStart(2, "0");
-    let s = Math.floor(e % 60)
-      .toString()
-      .padStart(2, "0");
-    return m + ":" + s;
-  }
-  const [otwOrder, setOtwOrder] = useState(null);
-  useEffect(() => {
-    socket = io("http://localhost:5000", {
-      auth: {
-        token: localStorage.getItem("token"),
-      },
-      query: {
-        id: state.user.id,
-      },
-    });
 
-    const otw = () => {
-      socket.emit("onTheWay", state.user.id);
-      socket.on("otwData", (data) => {
-        setOtwOrder(data);
-      });
-    };
+  const [otwOrder, setOtwOrder] = useState(null);
+
+  useEffect(() => {
+    if (!user?.id) return;
 
     socket.on("connect", () => {
-      console.log(socket);
-    });
-    socket.on("otw", () => {
-      socket.emit("onTheWay", state.user.id);
-      otw();
+      console.log(socket.connected);
     });
 
-    otw();
+    socket.emit("onTheWay", user.id);
+    socket.on("otwData", (data) => {
+      console.log("Whahahaha", data);
+      console.log(data);
+      setOtwOrder(data);
+    });
+
     socket.on("connect_error", (err) => {
       console.error(err.message);
     });
     return () => {
       socket.disconnect();
     };
-  }, [otwOrder, state.user.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
-  // console.log("///\\//////");
-  // console.log(otwOrder);
-  // console.log(state.user.id);
   return (
     <Bg>
       <link
@@ -275,112 +241,128 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, open, cart }) => {
       <Wrapper>
         {far ? (
           <>
-            <ReactMapGL
-              {...viewport}
-              mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
-              onViewportChange={(viewport) => {
-                setViewport(viewport);
-              }}
-              mapStyle="mapbox://styles/mapbox/streets-v11"
-            >
-              <Layer {...startLayer} />
-              <Layer {...endLayer} />
-              <Layer {...routeLayer} />
-              <Marker
-                latitude={start[1]}
-                longitude={start[0]}
-                offsetTop={(-viewport.zoom * 5) / 2}
-                offsetLeft={(-viewport.zoom * 4) / 2}
+            {startLayer && endLayer && routeLayer && viewState !== false && (
+              <ReactMapGL
+                {...viewState}
+                mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+                mapStyle="mapbox://styles/mapbox/streets-v11"
+                onMove={(evt) => setViewState(evt.viewState)}
               >
-                <img
-                  src={maponloc}
-                  width={viewport.zoom * -1}
-                  height={viewport.zoom * 4}
-                  alt="marker"
-                />
-              </Marker>
-            </ReactMapGL>
+                <Source generateId type="geojson" data={startLayer.source.data}>
+                  <Layer {...startLayer} />
+                </Source>
+                <Source generateId type="geojson" data={endLayer.source.data}>
+                  <Layer {...endLayer} />
+                </Source>
+                <Source generateId type="geojson" data={routeLayer.source.data}>
+                  <Layer {...routeLayer} />
+                </Source>
+
+                <Marker
+                  latitude={start[1]}
+                  longitude={start[0]}
+                  offsetTop={(-viewState.zoom * 5) / 2}
+                  offsetLeft={(-viewState.zoom * 4) / 2}
+                >
+                  <img
+                    src={maponloc}
+                    width={viewState.zoom * -1}
+                    height={viewState.zoom * 4}
+                    alt="marker"
+                  />
+                </Marker>
+              </ReactMapGL>
+            )}
           </>
         ) : (
           <>
-            <img className="x" onClick={doit} src={close} alt="close button" />
-            <ReactMapGL
-              onClick={(e) => {
-                const [long, lat] = e.lngLat;
-                setLocEdit([lat, long]);
-                setLoc([long, lat]);
-                // setStart([long, lat])
-                getAddress(lat, long);
-                console.log(e);
-              }}
-              {...viewport}
-              mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
-              mapStyle="mapbox://styles/expitc/ckw66dojb2fye14lcysxs3mcb"
-              // mapbox://styles/mapbox/streets-v11
-              onViewportChange={(viewport) => {
-                setViewport(viewport);
-              }}
-            >
-              {loc ? (
-                <>
-                  <Marker
-                    latitude={loc[1]}
-                    longitude={loc[0]}
-                    offsetTop={(-viewport.zoom * 5) / 2}
-                    offsetLeft={(-viewport.zoom * 4) / 2}
-                  >
-                    <img
-                      src={maponloc}
-                      width={viewport.zoom * -1}
-                      height={viewport.zoom * 4}
-                      alt="marker"
-                    />
-                  </Marker>
-                </>
-              ) : null}
-            </ReactMapGL>
+            {viewState !== false && (
+              <>
+                <img
+                  className="x"
+                  onClick={toggle}
+                  src={close}
+                  alt="close button"
+                />
+                <ReactMapGL
+                  onClick={async (e) => {
+                    const { lng, lat } = e.lngLat;
+                    setLocEdit([lat, lng]);
+                    setLoc([lng, lat]);
+                    setAddress(null);
+                    await getAddress(lat, lng);
+                  }}
+                  {...viewState}
+                  mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+                  mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+                  mapStyle="mapbox://styles/expitc/ckw66dojb2fye14lcysxs3mcb"
+                  // mapbox://styles/mapbox/streets-v11
+                  onMove={(evt) => setViewState(evt.viewState)}
+                >
+                  {loc && (
+                    <Marker
+                      latitude={loc[1]}
+                      longitude={loc[0]}
+                      offsetTop={(-viewState.zoom * 5) / 2}
+                      offsetLeft={(-viewState.zoom * 4) / 2}
+                    >
+                      <img
+                        src={maponloc}
+                        width={viewState.zoom * -1}
+                        height={viewState.zoom * 4}
+                        alt="marker"
+                      />
+                    </Marker>
+                  )}
+                </ReactMapGL>
+              </>
+            )}
           </>
         )}
-        {loc ? (
-          <>
-            <Card>
-              <h3>Select delivery location</h3>
-              <div>
-                <div className="adasdasfaw">
-                  <img src={maponloc} alt="onloc" />
-                  <div>
-                    <h5>{nameAddress ? nameAddress[0] : "not found"}</h5>
-                    <p>{address?.display_name}</p>
-                  </div>
+        {loc && (
+          <Card>
+            <h3>
+              {address?.display_name ? "Delivery location" : "Load location..."}
+            </h3>
+            <div>
+              <div className="adasdasfaw">
+                <img src={maponloc} alt="onloc" />
+                <div>
+                  <h5>{nameAddress ? nameAddress[0] : "not found"}</h5>
+                  <p>{address?.display_name}</p>
                 </div>
               </div>
-              {cart ? (
-                <>
-                  {otwOrder ? (
-                    <button
-                      onClick={() => {
-                        doit();
-                        updateLoc();
-                      }}
-                    >
-                      Confirm update location
-                    </button>
-                  ) : null}
-                </>
-              ) : (
-                <button
-                  onClick={() => {
-                    doit();
-                  }}
-                >
-                  Confirm location
-                </button>
-              )}
-            </Card>
-          </>
-        ) : null}
-        {far ? (
-          <Card h>
+            </div>
+            {address?.display_name && (
+              <>
+                {cart ? (
+                  <>
+                    {otwOrder && (
+                      <button
+                        onClick={() => {
+                          toggle();
+                          updateLoc();
+                        }}
+                      >
+                        Confirm update location
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <button
+                    onClick={() => {
+                      toggle();
+                    }}
+                  >
+                    Confirm location
+                  </button>
+                )}
+              </>
+            )}
+          </Card>
+        )}
+        {far && (
+          <Card h={true}>
             <h3> delivery location</h3>
             <div>
               <div className="adasdasfaw">
@@ -392,10 +374,14 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, open, cart }) => {
               </div>
             </div>
             <h3 h>Delivery Time</h3>
-            <p>{toMinutes(data?.duration)} Minutes</p>
-            <button onClick={toggle}>Confirm Order</button>
+            <p>{toMinutes(duration)} Minutes</p>
+            {otwOrder ? (
+              <button onClick={toggle}>Confirm Order Done</button>
+            ) : (
+              <button disabled>Waiting Approve</button>
+            )}
           </Card>
-        ) : null}
+        )}
       </Wrapper>
     </Bg>
   );

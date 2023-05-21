@@ -10,11 +10,16 @@ const DetailPage = (_req, _res) => {
   const { id } = useParams();
   const [resto, setResto] = useState([]);
   const [menu, setMenu] = useState([]);
-  const [transaction, setTransaction] = useState(null);
-  const [transactionID, setTransactionID] = useState(null);
-  const [transactionLast, setTransactionLast] = useState(null);
+  const [transactionOngoing, setTransactionOngoing] = useState(null);
+  const [transactionActive, setTransactionActive] = useState(null);
   const [lastResto, setLastResto] = useState(null);
   const [modalConfirmation, setModalConfirmation] = useState(false);
+
+  // console.log(resto);
+  // console.log("Hello");
+  // console.log(lastResto);
+  // console.log("Yahoo");
+  // console.log(transactionActive);
 
   useEffect(() => {
     (async () => {
@@ -26,17 +31,17 @@ const DetailPage = (_req, _res) => {
         .catch((err) => {
           handleError(err);
         });
-      await API.get("/transaction/user")
+      await API.get("/transaction/ongoing")
         .then((res) => {
-          setTransaction(res.data.data.status);
+          setTransactionOngoing(res.data.data.status);
         })
         .catch((err) => {
           handleError(err);
         });
-      await API.get("/transaction/user/order")
+      await API.get("/transaction/active")
         .then((res) => {
-          setTransactionID(res.data.data.sellerId);
-          setTransactionLast(res.data.data);
+          // setTransactionID(res.data.data.sellerId);
+          setTransactionActive(res.data.data);
         })
         .catch((err) => {
           handleError(err);
@@ -44,25 +49,28 @@ const DetailPage = (_req, _res) => {
     })();
   }, [id]);
 
-  useEffect(() => {
-    (async () => {
-      const res = await API.get("/transaction/user/order");
-      if (res?.data?.data?.sellerId === undefined) {
-        console.log("undefined");
-        setTransactionID(null);
-      } else {
-        console.log("not undefined");
-      }
-    })();
-  }, [modalConfirmation]);
+  // useEffect(() => {
+  //   (async () => {
+  //     const res = await API.get("/transaction/active");
+  //     if (res?.data?.data?.sellerId === undefined) {
+  //       console.log("undefined");
+  //       setTransactionID(null);
+  //     }
+  //   })();
+  // }, [modalConfirmation]);
 
   useEffect(() => {
+    if (!transactionActive?.sellerId) return;
     (async () => {
-      await API.get(`/last/resto/${transactionLast?.sellerId}`)
-        .then((res) => setLastResto(res.data.data.resto))
+      await API.get(`/resto/user/${transactionActive.sellerId}`)
+        .then((res) => {
+          console.log(res.data.data.resto, "OKOK");
+          setLastResto(res.data.data.resto);
+        })
         .catch((err) => handleError(err));
     })();
-  }, [transactionLast]);
+  }, [transactionActive]);
+  // console.log(transactionActive, "transactionActive");
 
   // console.log(resto.ownerId)
   // console.log(transactionID);
@@ -72,11 +80,11 @@ const DetailPage = (_req, _res) => {
   // console.log(menu)
   //
   const [form, setForm] = useState({});
-  const [trigHead, setTrigHead] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const handleOrder = useCallback(
     (productId) => {
       setForm({
-        sellerId: resto.ownerId,
+        sellerId: resto?.ownerId,
         product: [
           {
             productId: productId,
@@ -85,11 +93,11 @@ const DetailPage = (_req, _res) => {
         ],
       });
     },
-    [resto.ownerId]
+    [resto?.ownerId]
   );
 
-  const [fristhold, setFristhold] = useState(false);
   const order = useCallback(() => {
+    if (!form) return;
     (async () => {
       try {
         const config = {
@@ -97,54 +105,54 @@ const DetailPage = (_req, _res) => {
             "Content-Type": "application/json",
           },
         };
-        console.log(form.sellerId);
 
         const body = JSON.stringify(form);
-        console.log(body);
         let res = await API.post("/add/transaction", form, config);
-        console.log(res);
         if (res.status === 201) {
-          console.log("///////////////////");
-          console.log(res);
           res = {
             transactionId: res.data.thenTransaction.id,
             ...form.product[0],
           };
-          console.log("///////////////////");
-          console.log(res);
+
           res = JSON.stringify(res);
           await API.post("/add/order", res, config);
         }
-        setTrigHead(!trigHead);
+        setRefresh((prev) => !prev);
       } catch (err) {
         handleError(err);
       }
     })();
-  }, [form, trigHead]);
+  }, [form]);
 
-  useEffect(() => {
-    if (fristhold === true) {
-      if (resto.ownerId === transactionID || transactionID === null) {
-        order();
-      } else {
-        console.log(" u still have order on resto " + lastResto.title);
-        console.log(
-          "after this if use want to change resto then update transaction status cancel "
-        );
-        setModalConfirmation(true);
-      }
+  const autoOrder = useCallback(() => {
+    if (
+      resto?.ownerId === transactionActive?.sellerId ||
+      !transactionActive?.sellerId
+    ) {
+      order();
     } else {
-      setFristhold(true);
+      console.log(" u still have order on resto " + lastResto?.title);
+      console.log(
+        "after this if use want to change resto then update transaction status cancel "
+      );
+      setModalConfirmation(true);
     }
-  }, [form, lastResto.title, fristhold, order, resto.ownerId, transactionID]);
+  }, [resto?.ownerId, transactionActive?.sellerId, lastResto?.title, order]);
+
+  const [firstInit, setFirstInit] = useState(true);
+  useEffect(() => {
+    if (firstInit === true) return setFirstInit(false);
+    autoOrder();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form]);
 
   return (
     <>
-      <Header trigger={trigHead} />
+      <Header trigger={refresh} />
       {modalConfirmation ? (
         <Modal>
           <div className="modal-left">
-            {" u still have order on resto " + lastResto.title}
+            {" u still have order on resto " + lastResto?.title}
           </div>
           <div className="modal-left">
             Do you want to <span>Cancel</span> the last Order?
@@ -152,11 +160,11 @@ const DetailPage = (_req, _res) => {
             <button
               onClick={async () => {
                 try {
-                  await API.delete(`/transaction/${transactionLast?.id}`).catch(
-                    (err) => handleError(err)
-                  );
+                  await API.delete(
+                    `/transaction/${transactionActive?.id}`
+                  ).catch((err) => handleError(err));
                   setModalConfirmation(false);
-                  setTrigHead(!trigHead);
+                  setRefresh(!refresh);
                 } catch (err) {
                   handleError(err);
                 }
@@ -170,10 +178,11 @@ const DetailPage = (_req, _res) => {
       <Wrapper>
         <WrapCard>
           <h1>{resto.title}, Menus</h1>
-          {transaction ? (
+          {transactionOngoing ? (
             <>
               <h4>
-                You can't order right now, you have transaction {transaction}
+                You can't order right now, you have transaction{" "}
+                {transactionOngoing}
               </h4>
               <h5>please wait until your order finish.</h5>
             </>
@@ -184,7 +193,7 @@ const DetailPage = (_req, _res) => {
                 <img src={menu.img} alt={menu.img} key={menu.img} />
                 <h3>{menu.title}</h3>
                 <p>{convertRupiah.convert(menu.price)}</p>
-                {transaction ? (
+                {transactionOngoing ? (
                   <button key={menu.id}>
                     <Dis src={Disable} />
                   </button>

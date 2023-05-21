@@ -1,6 +1,6 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from "styled-components";
 
-export const GlobalStyles = createGlobalStyle `
+export const GlobalStyles = createGlobalStyle`
     :root {
         --maxWidth: 1280px;
         --white: #fff;
@@ -15,15 +15,15 @@ export const GlobalStyles = createGlobalStyle `
         --mainYellow: #FFC700;
     }
     * {
-        @import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&family=Shippori+Antique+B1&display=swap');
         box-sizing: border-box;
-        font-family: Abhaya Libre ExtraBold;
+        font-family: 'Abhaya Libre','Shippori Antique B1', sans-serif;
     }
     body {
         margin: 0;
         padding: 0;
         background-color: #E5E5E5;
         overflow-x: hidden;
+        font-family: 'Abhaya Libre','Shippori Antique B1', sans-serif;
     }
     h1 {
         font-size: 2rem;

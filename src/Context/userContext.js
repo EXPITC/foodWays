@@ -5,6 +5,7 @@ export const UserContext = createContext(null);
 const initialState = {
   isLogin: false,
   user: {},
+  resto: {},
 };
 
 const reducer = (_state, action) => {
@@ -22,6 +23,7 @@ const reducer = (_state, action) => {
       return {
         isLogin: false,
         user: {},
+        resto: {},
       };
     default:
       throw new Error();
