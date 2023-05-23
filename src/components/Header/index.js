@@ -10,43 +10,53 @@ import poly from "../../img/poly.svg";
 
 import { Head, TopFlex, Wrap, Polyy, Specialdrop } from "./Header.styled";
 import DropDown from "../DropDown";
+import AuthButtons from "../AuthButtons";
+import { AuthModalContext } from "../../Context/authModalContext";
 
 const Header = ({ trigger, noTroll }) => {
-  let [show, setShow] = useState(false);
-  const { state, _dispatch } = useContext(UserContext);
-  const toggle = () => setShow(!show);
-  const { user } = state;
+  // noTroll mean dont show trolly chart
+  // trigger for trig the fetch of the count for chart because header is separate comp
+  const { state } = useContext(UserContext);
+  const { dispatch } = useContext(AuthModalContext);
 
-  const isOwner = useMemo(
-    () => (user.role === "owner" ? true : false),
-    [user.role]
-  );
+  const { isLogin, user } = useMemo(() => {
+    return state;
+  }, [state]);
+  const isOwner = user?.role === "owner" ? true : false;
 
-  const [total, letTotal] = useState(0);
+  const [total, setTotal] = useState(0);
+
+  const [isDropdown, setDropdown] = useState(false);
+  const handleDropdown = () => setDropdown((prev) => !prev);
+  const handleLogin = () => dispatch("openLoginModal");
+  const handleRegister = () => dispatch("openRegisterModal");
+
   useEffect(() => {
-    let controller = new AbortController();
+    if (!isLogin) return;
+    const controller = new AbortController();
+    const signal = controller.signal;
     (async () => {
-      await API.get("/order/count")
-        .then((res) => letTotal(res.data.total))
+      await API.get("/order/count", { signal })
+        .then((res) => {
+          if (!res) return;
+          setTotal(res.data.total);
+        })
         .catch((err) => handleError(err));
     })();
     return () => controller.abort();
-  }, [trigger]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trigger, isLogin]);
 
-  // const [restoId, setRestoId] = useState("");
   const [resto, setResto] = useState(null);
-  const restoId = useMemo(() => {
-    if (resto?.id) {
-      return resto.id;
-    } else {
-      return "";
-    }
-  }, [resto]);
+
   useEffect(() => {
-    let controller = new AbortController();
+    if (!isLogin) return;
+    const controller = new AbortController();
+    const signal = controller.signal;
     (async () => {
-      await API.get(`/resto`)
+      await API.get(`/resto`, { signal })
         .then((res) => {
+          if (!res) return;
           setResto(res.data.data.resto.data);
         })
         .catch((err) => {
@@ -55,42 +65,56 @@ const Header = ({ trigger, noTroll }) => {
     })();
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLogin]);
 
   return (
     <>
+      <AuthButtons />
       <Head>
         <TopFlex>
           <Link to="/">
             <img src={Icon} className="shake" alt="button home" />
           </Link>
           <Wrap>
-            {isOwner ? (
-              <Link className="cart" to={`/Resto/${restoId}`}>
-                <img
-                  style={{ width: "50px", height: "50px" }}
-                  src={Shop}
-                  alt="shop"
-                />
-              </Link>
-            ) : noTroll ? null : (
+            {isLogin ? (
               <>
-                {total !== 0 && <p>{total}</p>}
-                <Link className="cart" to={total !== 0 ? "/cart" : "/resto"}>
-                  <img src={Trolly} alt="trolly" />
-                </Link>
+                {isOwner ? (
+                  <Link className="cart" to={`/Resto/${user?.resto?.id}`}>
+                    <img
+                      style={{ width: "50px", height: "50px" }}
+                      src={Shop}
+                      alt="shop"
+                    />
+                  </Link>
+                ) : (
+                  !noTroll && (
+                    <>
+                      {total !== 0 && <p>{total}</p>}
+                      <Link
+                        className="cart"
+                        to={total !== 0 ? "/cart" : "/resto"}
+                      >
+                        <img src={Trolly} alt="trolly" />
+                      </Link>
+                    </>
+                  )
+                )}
+                <img
+                  className="profile"
+                  onClick={handleDropdown}
+                  src={user.image}
+                  alt="profile"
+                />
+              </>
+            ) : (
+              <>
+                <button onClick={handleRegister}>Register</button>
+                <button onClick={handleLogin}>Login</button>
               </>
             )}
-
-            <img
-              className="profile"
-              onClick={toggle}
-              src={user.image}
-              alt="profile"
-            />
           </Wrap>
         </TopFlex>
-        {show ? (
+        {isDropdown && (
           <>
             <Polyy>
               <div className="poly">
@@ -98,10 +122,10 @@ const Header = ({ trigger, noTroll }) => {
               </div>
             </Polyy>
             <Specialdrop>
-              <DropDown className="drop" logout />
+              <DropDown className="drop" handleDropdown={handleDropdown} />
             </Specialdrop>
           </>
-        ) : null}
+        )}
       </Head>
     </>
   );

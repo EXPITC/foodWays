@@ -68,7 +68,6 @@ const CartPage = () => {
   );
   const [address, setAddress] = useState(null);
   const [loc, setLoc] = useState(user.location?.split(" "));
-  const [refresh, setReresh] = useState(false);
 
   const updateTransaction = async () => {
     await API.get("/order/count")

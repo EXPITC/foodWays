@@ -1,4 +1,4 @@
-import { React, useState, useContext, useEffect, useCallback } from "react";
+import { React, useState, useContext, useEffect } from "react";
 
 import Header from "../Header";
 import Clip from "../../img/clip.svg";
@@ -10,7 +10,7 @@ import axios from "axios";
 import { UserContext } from "../../Context/userContext";
 import { useNavigate } from "react-router-dom";
 
-const EditProfile = ({ _U }) => {
+const EditProfile = () => {
   const navigate = useNavigate();
   const [showMap, setShowMap] = useState(false);
   const toggle = () => setShowMap(!showMap);

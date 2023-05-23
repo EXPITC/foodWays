@@ -8,19 +8,11 @@ import close from "../../img/close.png";
 import maponloc from "../../img/onloc.svg";
 import { Wrapper, Bg, Card } from "./Map.styled";
 import socketIo from "../../utils/socket";
+import toMinutes from "../../utils/toMinutes";
 
-function toMinutes(n) {
-  let m = Math.floor((n % 3600) / 60)
-    .toString()
-    .padStart(2, "0");
-  let s = Math.floor(n % 60)
-    .toString()
-    .padStart(2, "0");
-  return m + ":" + s;
-}
 const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
   const [viewState, setViewState] = useState(false);
-  const { state, _dispatch } = useContext(UserContext);
+  const { state } = useContext(UserContext);
   const { user } = state;
   const socket = socketIo(user?.id);
   const yogyaLatLong = [-7.780888853879075, 110.38593679008736];
@@ -34,7 +26,8 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
   }, [user?.location]);
 
   const start = useMemo(() => {
-    if (startLoc) return [parseFloat(startLoc[1]), parseFloat(startLoc[0])];
+    if (startLoc?.length > 0)
+      return [parseFloat(startLoc[1]), parseFloat(startLoc[0])];
     //
     if (!user?.location) return yogyaLatLong;
 
@@ -62,12 +55,14 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
   const [loc, setLoc] = useState(false);
 
   useEffect(() => {
-    let controller = new AbortController();
+    const controller = new AbortController();
+    const signal = controller.signal;
     (async () => {
       if (far) {
         try {
           API.get(
-            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${end[1]}&lon=${end[0]}`
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${end[1]}&lon=${end[0]}`,
+            { signal }
           ).then((res) => {
             setAddress(res?.data);
           });
@@ -102,7 +97,8 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
   const [routeLayer, setRouteLayer] = useState(false);
 
   useEffect(() => {
-    let controller = new AbortController();
+    const controller = new AbortController();
+    const signal = controller.signal;
     // Get route with end
     (async () => {
       // make a directions request using cycling profile
@@ -112,11 +108,11 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
         // const direction_api = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`;
         const direction_api2 = `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]}%2C${start[1]}%3B${end[0]}%2C${end[1]}?alternatives=false&exclude=toll%2Cferry%2Cunpaved%2Ccash_only_tolls&geometries=geojson&language=en&overview=full&steps=true&access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`;
 
-        const response = await fetch(direction_api2);
+        const response = await fetch(direction_api2, { signal });
         let data = await response.json();
         data = data.routes[0];
 
-        setDuration(data?.duration);
+        setDuration(data?.duration || 0);
         const route = data.geometry.coordinates;
         const geojson = {
           type: "Feature",
@@ -218,8 +214,8 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
 
     socket.emit("onTheWay", user.id);
     socket.on("otwData", (data) => {
-      console.log("Whahahaha", data);
-      console.log(data);
+      // console.log("Whahahaha", data);
+      // console.log(data);
       setOtwOrder(data);
     });
 
@@ -368,7 +364,9 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
               <div className="adasdasfaw">
                 <img src={maponloc} alt="onloc" />
                 <div>
-                  <h5>{nameAddress ? nameAddress[0] : "not found"}</h5>
+                  <h5>
+                    {nameAddress.length > 0 ? nameAddress[0] : "not found"}
+                  </h5>
                   <p>{address?.display_name}</p>
                 </div>
               </div>

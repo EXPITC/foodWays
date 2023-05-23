@@ -14,9 +14,9 @@ export const API = axios.create({
 
 export const handleError = (err) => {
   if (err.response) {
-    console.log(err.response.data);
-    console.log(err.response.data.message);
-    console.log(err.response.status);
+    console.log(err.response?.data);
+    console.log(err.response?.data?.message);
+    console.log(err.response?.status);
   }
   if (err.response?.status === 401) {
     alert(err.response.data.err);

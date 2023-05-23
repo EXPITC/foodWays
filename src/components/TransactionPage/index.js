@@ -7,7 +7,7 @@ import { UserContext } from "../../Context/userContext";
 import socketIo from "../../utils/socket";
 
 const TransactionPage = () => {
-  const { state, _dispatch } = useContext(UserContext);
+  const { state } = useContext(UserContext);
   const [transactions, setTransactions] = useState([]);
   const socket = socketIo(state.user.id);
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useCallback } from "react";
 import { API, handleError } from "../../config/api";
 import { Wrappper, Flexx } from "./AddResto.styled.";
-import { Wrapper, WrapperMain, Flex } from "../AddProduct/AddProduct.styled";
+import { Wrapper, WrapperMain, Flex } from "../AddMenu/AddMenu.styled";
 import Header from "../Header";
 import Clip from "../../img/clip.svg";
 import Map from "../Map";
@@ -16,20 +16,28 @@ const AddResto = () => {
   const { user } = state;
   const [showMap, setShowMap] = useState(false);
   const toggle = useCallback(() => setShowMap(!showMap), [showMap]);
+  const isResto = !!user?.resto;
 
   const [form, setForm] = useState({
-    title: "",
-    img: "",
-    loc: "",
+    title: user?.resto?.title || "",
+    img: user?.resto?.img || "",
+    loc: user?.resto?.loc || "",
   });
-  const [loc, setLoc] = useState(user.location?.split(" "));
-  const [address, setAddress] = useState(null);
+
+  const [loc, setLoc] = useState(
+    form.loc.split(" ") || user.location.split(" ") || []
+  );
+  const [address, setAddress] = useState("");
   useEffect(() => {
-    if (loc) {
+    if (loc.length === 0) return;
+    const controller = new AbortController();
+    const signal = controller.signal;
+    (async () => {
       try {
-        axios
+        await axios
           .get(
-            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc[0]}&lon=${loc[1]}`
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc[0]}&lon=${loc[1]}`,
+            { signal }
           )
           .then((res) => {
             setAddress(res.data.display_name);
@@ -39,11 +47,14 @@ const AddResto = () => {
           loc: loc[0] + " " + loc[1],
         }));
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
-    }
+    })();
+    return () => controller.abort();
   }, [loc]);
-  let [pre, setPre] = useState(Clip);
+
+  let [pre, setPre] = useState(form.img || Clip);
+
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -58,8 +69,10 @@ const AddResto = () => {
       }
     }
   };
+
   const handleSubmit = useCallback(
     (e) => {
+      const restoAPI = isResto ? "/resto" : "/add/resto";
       (async () => {
         try {
           e.preventDefault();
@@ -70,48 +83,35 @@ const AddResto = () => {
           };
           let formData = new FormData();
           formData.set("title", form.title);
-          if (form.img) {
+          if (form.img && form.img !== user?.resto?.img) {
             formData.set("img", form.img[0], form.img[0].name);
           }
           formData.set("loc", form.loc);
-          console.log(formData);
-          const res = await API.post("/add/resto", formData, config);
-          navigate(`/Resto/${res.data.data.resto.response.id}`);
+
+          const res = isResto
+            ? await API.patch(restoAPI, formData, config)
+            : await API.post(restoAPI, formData, config);
+
+          const redirectUrl = isResto
+            ? `/resto/${user.resto.id}`
+            : `/Resto/${res.data.data.resto.response.id}`;
+
+          navigate(redirectUrl);
         } catch (err) {
           handleError(err);
         }
       })();
     },
-    [form.img, form.loc, form.title, navigate]
+    [form.img, form.loc, form.title, navigate, isResto, user?.resto]
   );
-  // const handleSubmit2 = async (e) => {
-  //   try {
-  //     e.preventDefault();
-  //     const config = {
-  //       headers: {
-  //         "Content-Type": "multipart/form-data",
-  //       },
-  //     };
-  //     let formData = new FormData();
-  //     formData.set("title", form.title);
-  //     if (form.img) {
-  //       formData.set("img", form.img[0], form.img[0].name);
-  //     }
-  //     formData.set("loc", form.loc);
-  //     console.log(formData);
-  //     const res = await API.post("/add/resto", formData, config);
-  //     navigate(`/Resto/${res.data.data.resto.response.id}`);
-  //   } catch (err) {
-  //     handleError(err);
-  //   }
-  // };
+
   return (
     <>
       {showMap && <Map toggle={toggle} setLocEdit={setLoc} />}
       <Header />
       <Wrappper>
         <Wrapper>
-          <h1>Add Resto</h1>
+          <h1>{isResto ? "Edit" : "Add"} Resto</h1>
           <Flexx btwn>
             <input
               type="text"
@@ -119,7 +119,7 @@ const AddResto = () => {
               placeholder="Title"
               className="first"
               onChange={handleChange}
-              // value= {form.title}
+              value={form.title}
             />
             <label className="second" htmlFor="imgFile">
               Attach Image
@@ -139,7 +139,7 @@ const AddResto = () => {
               name="location"
               placeholder="Location"
               className="firsts"
-              value={address}
+              defaultValue={address}
             />
             <button className="secondbtn" onClick={toggle}>
               Select On Map

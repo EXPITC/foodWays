@@ -46,7 +46,6 @@ export const Polyy = styled.div`
   }
 `;
 export const OneLineFlexTop = styled.div`
-  @import url("https://fonts.googleapis.com/css2?family=Shippori+Antique+B1&display=swap");
   padding-top: 27px;
   margin-bottom: 10px;
   padding-left: 4%;
@@ -250,6 +249,7 @@ export const CardResto = styled.div`
   }
 `;
 export const CardNear = styled.div`
+  max-width: 245px;
   min-width: 245px;
   min-height: 260px;
   background: #ffffff;
@@ -258,6 +258,7 @@ export const CardNear = styled.div`
   flex-direction: column;
   justify-content: space-between;
   padding: 10px;
+  cursor: pointer;
   p {
     font-family: "serif";
     font-style: normal;
@@ -274,11 +275,39 @@ export const CardNear = styled.div`
     font-style: normal;
     font-size: 18px;
   }
-  img {
+  > img {
     background: #222;
     min-width: 100%;
     height: 160px;
     margin-bottom: 0;
     border-radius: 5px;
+  }
+
+  .wrapInformation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    div {
+      display: flex;
+      align-items: center;
+      img {
+        width: 30px;
+        height: 50%;
+      }
+      p {
+        font-family: "Abhaya Libre ExtraBold";
+        margin: auto;
+        text-align: center;
+        font-weight: bold;
+        color: #433434;
+      }
+    }
+  }
+  .address,
+  .disctance {
+    font-family: "Abhaya Libre";
+    text-align: right;
+    font-weight: normal;
+    color: #707070;
   }
 `;

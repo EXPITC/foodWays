@@ -7,20 +7,18 @@ import logoutIcon from "../../img/logout.svg";
 import foodIcon from "../../img/foodicon.svg";
 import Transaction from "../../img/transaction.svg";
 import { Link } from "react-router-dom";
-const DropDown = ({ U, _LogoutSwitch, set, logout }) => {
-  // x = false;
+const DropDown = ({ logout, handleDropdown }) => {
   const { state, dispatch } = useContext(UserContext);
   const handleLogout = () => {
     dispatch({
       status: "logout",
     });
-    console.log(state);
+    handleDropdown();
   };
+
   const { user } = state;
-  let isOwner = false;
-  if (user?.role === "owner") {
-    isOwner = true;
-  }
+  const isOwner = user.role === "owner" ? true : false;
+
   return (
     <>
       {isOwner ? (
@@ -28,19 +26,19 @@ const DropDown = ({ U, _LogoutSwitch, set, logout }) => {
           <Wrapper2>
             <Wrapper>
               <Link to="/Profile">
-                <JustWrap onClick={set}>
+                <JustWrap>
                   <Icon src={userIcon} />
                   <p>Profile Partner</p>
                 </JustWrap>
               </Link>
-              <Link to="/Add-Product">
-                <JustWrap onClick={set}>
+              <Link to="/Add-Menu">
+                <JustWrap>
                   <Icon src={foodIcon} />
-                  <p>Add Product</p>
+                  <p>Add Menu</p>
                 </JustWrap>
               </Link>
               <Link to="/Transaction">
-                <JustWrap onClick={set}>
+                <JustWrap>
                   <Icon src={Transaction} />
                   <p>Transaction</p>
                 </JustWrap>
@@ -67,7 +65,7 @@ const DropDown = ({ U, _LogoutSwitch, set, logout }) => {
         <Wrapper2 h>
           <Wrapper h>
             <Link to="/Profile">
-              <JustWrap h onClick={set}>
+              <JustWrap h>
                 <Icon src={userIcon} />
                 <p>Profile</p>
               </JustWrap>

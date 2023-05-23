@@ -1,17 +1,16 @@
-import { React, useState, useContext, useMemo } from "react";
+import { React, useState, useContext } from "react";
 import { API, handleError } from "../../config/api";
 import { Wrapper, Bg } from "./Register.style";
 import Xbtns from "../../img/close.png";
 import { UserContext } from "../../Context/userContext";
 import { useNavigate } from "react-router-dom";
 
-const Register = ({ showR, Cancel, toggle }) => {
-  const { _state, dispatch } = useContext(UserContext);
-  const modal = useMemo(() => showR, [showR]);
+const Register = ({ modal, handleCloseAuthModal, handleLoginModal }) => {
+  const { dispatch } = useContext(UserContext);
 
   const navigate = useNavigate();
 
-  const [Form, setForm] = useState({
+  const [form, setForm] = useState({
     email: "",
     password: "",
     fullname: "",
@@ -20,10 +19,10 @@ const Register = ({ showR, Cancel, toggle }) => {
     role: "",
   });
   const handelChange = (e) => {
-    setForm({
-      ...Form,
+    setForm((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    });
+    }));
   };
 
   const handelSubmit = async (e) => {
@@ -34,7 +33,7 @@ const Register = ({ showR, Cancel, toggle }) => {
           "Content-Type": "application/json",
         },
       };
-      const body = JSON.stringify(Form);
+      const body = JSON.stringify(form);
       const response = await API.post("/register", body, config);
       if (response?.status === 201) {
         return alert(response.data.message);
@@ -45,7 +44,7 @@ const Register = ({ showR, Cancel, toggle }) => {
           status: "login",
           payload: response.data.data.user,
         });
-        // RegisterSwitch()
+        handleCloseAuthModal();
       }
       // console.log(response.data.data.user.role);
       if (response.data.data.user.role === "owner") {
@@ -63,28 +62,31 @@ const Register = ({ showR, Cancel, toggle }) => {
       {modal && (
         <Bg>
           <Wrapper active={!modal}>
-            <div class="singup2-cointainer">
+            <div className="singup2-cointainer">
               <img
-                class="x-button-singup2"
-                onClick={Cancel}
+                className="x-button-singup2"
+                onClick={handleCloseAuthModal}
                 src={Xbtns}
                 alt=""
               />
               <form>
                 <h2>Register</h2>
                 <input
+                  autoComplete={form.email}
                   type="email"
                   name="email"
                   placeholder="Email"
                   onChange={handelChange}
                 />
                 <input
+                  autoComplete={form.password}
                   type="pas"
                   name="password"
                   placeholder="Password"
                   onChange={handelChange}
                 />
                 <input
+                  autoComplete={form.fullname}
                   type="text"
                   name="fullname"
                   placeholder="Full Name"
@@ -99,6 +101,7 @@ const Register = ({ showR, Cancel, toggle }) => {
                   <option value="Female">Female</option>
                 </select>
                 <input
+                  autoComplete={form.phone}
                   type="number"
                   name="phone"
                   placeholder="Phone Number"
@@ -112,12 +115,12 @@ const Register = ({ showR, Cancel, toggle }) => {
                   <option value="costumer">Costumer</option>
                   <option value="owner">Owner</option>
                 </select>
-                <button class="btnsingup2" onClick={handelSubmit}>
+                <button className="btnsingup2" onClick={handelSubmit}>
                   SINGUP
                 </button>
-                <p class="already-have-acc">
+                <p className="already-have-acc">
                   Already have an account ?{" "}
-                  <span class="login-here" onClick={toggle}>
+                  <span className="login-here" onClick={handleLoginModal}>
                     Klik Here
                   </span>
                 </p>

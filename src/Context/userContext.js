@@ -1,12 +1,11 @@
 import { createContext, useReducer } from "react";
 
-export const UserContext = createContext(null);
-
 const initialState = {
   isLogin: false,
   user: {},
-  resto: {},
 };
+
+export const UserContext = createContext(initialState);
 
 const reducer = (_state, action) => {
   const { status, payload } = action;
@@ -20,13 +19,9 @@ const reducer = (_state, action) => {
       };
     case "logout":
       localStorage.removeItem("token");
-      return {
-        isLogin: false,
-        user: {},
-        resto: {},
-      };
+      return initialState;
     default:
-      throw new Error();
+      return initialState;
   }
 };
 

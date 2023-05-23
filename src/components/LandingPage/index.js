@@ -1,17 +1,8 @@
-import {
-  React,
-  useState,
-  useContext,
-  useEffect,
-  useCallback,
-  useMemo,
-} from "react";
+import { React, useState, useContext, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { API, handleError } from "../../config/api";
 
 //components
-import Login from "../Login";
-import Register from "../Register";
 import DropDown from "../DropDown";
 
 //img
@@ -37,7 +28,9 @@ import {
 } from "./LandingPage.styled";
 
 import { UserContext } from "../../Context/userContext";
-import { Control } from "mapbox-gl";
+import convertRupiah from "rupiah-format";
+import AuthButtons from "../AuthButtons";
+import { AuthModalContext } from "../../Context/authModalContext";
 
 // TC~Dummy
 // const resto = [
@@ -81,70 +74,68 @@ import { Control } from "mapbox-gl";
 //   },
 // ];
 
-const LandingPage = ({ U, sett, setf }) => {
-  // const [which ,setWhich] = useState(false);
-  const [show, setShow] = useState(false);
-  // R for Register
-  const [showR, setShowR] = useState(false);
-  const [drop, setDrop] = useState(false);
-  const drops = useCallback(() => {
-    setDrop(!drop);
-    setShow(false);
-    setShowR(false);
-  }, [drop]);
-  // const reg = () => (setDrop(false),setWhich(!which));
-  // const login = () => (setDrop(false),setWhich(false));
-  const toggle = useCallback(() => {
-    setShow(!show);
-    setShowR(false);
-  }, [show]);
-  const toggleR = useCallback(() => {
-    setShowR(!showR);
-    setShow(false);
-  }, [showR]);
-  const Cancel = useCallback(() => setShowR(!showR), [showR]);
-  const CancelL = useCallback(() => setShow(!show), [show]);
+const LandingPage = () => {
+  const { state } = useContext(UserContext);
+  const { dispatch } = useContext(AuthModalContext);
 
-  const { state, _dispatch } = useContext(UserContext);
   const { isLogin, user } = state;
+
+  const handleLogin = () => {
+    dispatch("openLoginModal");
+  };
+  const handleRegister = () => {
+    dispatch("openRegisterModal");
+  };
+
+  // Drops for dropdown if user already login
+  const [drop, setDrop] = useState(false);
+  const handleDropdown = () => setDrop((prev) => !prev);
 
   const isCustomer = useMemo(() => {
     if (user?.role === "owner") return false;
     return true;
   }, [user?.role]);
 
-  const [nears, setNears] = useState([]);
+  const [nearMenus, setNearMenus] = useState([]);
   const [restos, setRestos] = useState([]);
   const [total, setTotal] = useState(0);
 
   // Gathering total order, resto data, and near resto
   useEffect(() => {
+    setNearMenus([]);
+    setTotal(0);
     const controller = new AbortController();
+    const signal = controller.signal;
     (async () => {
+      await API.get("/restos", { signal }).then((res) => {
+        setRestos(res.data.data.restos);
+      });
+      // Pick random product for showcase if user not yet login,
+      // and show the nears product to show also fetch if there is any order from user chart.
+      if (!isLogin) {
+        await API.get("/products/random", { signal })
+          .then((res) => setNearMenus(res.data.data.products))
+          .catch((err) => handleError(err));
+        return;
+      }
+      controller.abort();
       await API.get("/order/count")
         .then((res) => setTotal(res.data.total))
         .catch((err) => handleError(err));
+      if (!user.location) return;
       await API.get("/nearResto")
-        .then((res) => setNears(res.data.data.nearResto))
+        .then((res) => setNearMenus(res.data.data.nearResto))
         .catch((err) => {
-          setNears(null);
           handleError(err);
         });
-      await API.get("/restos").then((res) => {
-        setRestos(res.data.data.restos);
-      });
     })();
+
     return () => controller.abort();
-  }, []);
+  }, [isLogin, user?.location]);
 
   return (
     <>
-      {!isLogin && (
-        <>
-          <Login show={show} Cancel={CancelL} toggle={toggleR} />
-          <Register showR={showR} Cancel={Cancel} toggle={toggle} />
-        </>
-      )}
+      <AuthButtons />
       {/* <Header/> */}
       <WrapperYellow>
         <OneLineFlexTop>
@@ -155,10 +146,14 @@ const LandingPage = ({ U, sett, setf }) => {
                 {isCustomer && (
                   <Link to={total !== 0 ? "/cart" : "/resto"}>
                     {total !== 0 && <p>{total}</p>}
-                    <ImgTrolly src={Trolly} onClick={sett} alt="Trolly" />
+                    <ImgTrolly src={Trolly} alt="Trolly" />
                   </Link>
                 )}
-                <ImgProfile src={user.image} onClick={drops} alt="Profile" />
+                <ImgProfile
+                  src={user.image}
+                  onClick={handleDropdown}
+                  alt="Profile"
+                />
 
                 {drop && (
                   <>
@@ -167,18 +162,16 @@ const LandingPage = ({ U, sett, setf }) => {
                         <img src={poly} alt="poly" />
                       </div>
                     </Polyy>
-                    <DropDown />
+                    <DropDown handleDropdown={handleDropdown} />
                   </>
                 )}
               </>
             ) : (
               <>
-                <button onClick={toggleR}>Register</button>
-                <button onClick={toggle}>Login</button>
+                <button onClick={handleRegister}>Register</button>
+                <button onClick={handleLogin}>Login</button>
               </>
             )}
-
-            {/* login condition */}
           </div>
         </OneLineFlexTop>
         <TextAndPizza>
@@ -201,44 +194,98 @@ const LandingPage = ({ U, sett, setf }) => {
       <WrapMain>
         <h1>Popular Restaurant</h1>
         <WrapFlex2>
-          {/* TODO: REPEAT */}
-          {restos.map((resto, index) => {
-            return (
-              <Link to={`/Resto/${resto.id}`} className="nonee" key={index}>
-                <CardResto key={resto.title}>
-                  <img src={resto.img} alt={resto.name} />
-                  <h2>{resto.title}</h2>
-                </CardResto>
-              </Link>
-            );
-          })}
+          {restos.length > 0 &&
+            restos.map((resto, index) => {
+              return (
+                <Link
+                  to={`/Resto/${resto.id}`}
+                  className="nonee"
+                  key={index + 2 + resto.img}
+                >
+                  <CardResto key={resto.title}>
+                    <img src={resto.img} alt={resto.name} />
+                    <h2>{resto.title}</h2>
+                  </CardResto>
+                </Link>
+              );
+            })}
         </WrapFlex2>
-        <h1>Restaurant Near You</h1>
+        <h1>{isLogin ? "Restaurant Near You" : "Menus"}</h1>
         <WrapFlex3>
-          {!nears ? (
-            <h3>Please update your location.</h3>
+          {isLogin ? (
+            !nearMenus.length > 0 ? (
+              user.location ? (
+                <h3 key="userHaveLocation">Load your location...</h3>
+              ) : (
+                <h3 key="userNotYetSetLoc">Please update your location</h3>
+              )
+            ) : (
+              <>
+                {nearMenus[0]?.menu && // Check to make sure its data fetch from random not from nearResto line 126
+                  nearMenus.map((near, index) => {
+                    return near.menu.map((menu) => {
+                      return (
+                        <Link
+                          to={`/Resto/${near.resto.id}`}
+                          className="nonee"
+                          key={index + menu.title}
+                        >
+                          <CardNear>
+                            <img src={menu.img} alt={menu.title} />
+                            <h3>{menu.title}</h3>
+                            <div className="wrapInformation">
+                              <div>
+                                <img src={near.resto.img} alt="img logo" />
+                                <p>{near.resto.title}</p>
+                              </div>
+                              <div>
+                                <p>{convertRupiah.convert(menu.price)}</p>
+                              </div>
+                            </div>
+                            <div className="wrapInformation">
+                              <p className="address">{near.address}</p>
+                              <p className="disctance">{near.distance} KM</p>
+                            </div>
+                          </CardNear>
+                        </Link>
+                      );
+                    });
+                  })}
+              </>
+            )
           ) : (
+            // Not login near card condition
             <>
-              {nears.map((near, index) => {
-                return near.menu.map((menu) => {
+              {!nearMenus.length > 0 ? (
+                <h3 keu="handleLoginCondition">Please wait, load menus...</h3>
+              ) : !nearMenus[0].seller?.restos ? (
+                // this one for transition when logout when the nearMenus state data remaind from '/nearResto' fetch line 127
+                <h3 key="handleLogoutTransition">Please wait, load menus...</h3>
+              ) : (
+                nearMenus.map((menu, index) => {
                   return (
-                    <Link
-                      to={`/Resto/${near.resto.id}`}
-                      className="nonee"
-                      key={index + menu.title}
+                    <CardNear
+                      key={index + menu.img + menu.price}
+                      onClick={handleLogin}
                     >
-                      <CardNear>
-                        <img src={menu.img} alt={menu.title} />
-                        <h3>{menu.title}</h3>
-                        <p>{near.distance} KM</p>
-                      </CardNear>
-                    </Link>
+                      <img src={menu.img} alt={menu.title} />
+                      <h3>{menu.title}</h3>
+                      <div className="wrapInformation">
+                        <div>
+                          <img src={menu.seller.restos.img} alt="img logo" />
+                          <p>{menu.seller.restos.title}</p>
+                        </div>
+                        <div>
+                          <p>{convertRupiah.convert(menu.price)}</p>
+                        </div>
+                      </div>
+                      <p>{menu.seller.restos.address}</p>
+                    </CardNear>
                   );
-                });
-              })}
+                })
+              )}
             </>
           )}
-          {/* TODO: REPEAT */}
         </WrapFlex3>
       </WrapMain>
     </>
