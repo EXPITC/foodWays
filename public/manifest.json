@@ -3,17 +3,17 @@
   "name": "Foodways",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "https://regeld.com/desi/wp-content/uploads/2019/07/sircle_d_orange.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "pleasePutLogoAtPublic.png",
+      "src": "https://regeld.com/desi/wp-content/uploads/2019/07/sircle_d_orange.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
+      "src": "https://regeld.com/desi/wp-content/uploads/2019/07/sircle_d_orange.png",
       "type": "image/png",
       "sizes": "512x512"
     }

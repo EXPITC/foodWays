@@ -170,7 +170,8 @@ const EditProfile = () => {
             name="location"
             placeholder="Location"
             className="firsts"
-            value={response?.display_name}
+            defaultValue={response?.display_name}
+            disabled
           />
           <button className="secondbtn" onClick={toggle}>
             Select On Map

@@ -272,7 +272,7 @@ const LandingPage = () => {
                       <h3>{menu.title}</h3>
                       <div className="wrapInformation">
                         <div>
-                          <img src={menu.seller.restos.img} alt="img logo" />
+                          <img src={menu.seller.restos.img} alt="logo" />
                           <p>{menu.seller.restos.title}</p>
                         </div>
                         <div>

@@ -12,11 +12,16 @@ import { useNavigate } from "react-router-dom";
 
 const AddResto = () => {
   const navigate = useNavigate();
-  const { state } = useContext(UserContext);
+
+  const { state, dispatch } = useContext(UserContext);
   const { user } = state;
-  const [showMap, setShowMap] = useState(false);
-  const toggle = useCallback(() => setShowMap(!showMap), [showMap]);
   const isResto = !!user?.resto;
+
+  const [showMap, setShowMap] = useState(false);
+
+  const [isLoading, setLoading] = useState(false);
+
+  const toggle = useCallback(() => setShowMap(!showMap), [showMap]);
 
   const [form, setForm] = useState({
     title: user?.resto?.title || "",
@@ -72,6 +77,7 @@ const AddResto = () => {
 
   const handleSubmit = useCallback(
     (e) => {
+      setLoading(true);
       const restoAPI = isResto ? "/resto" : "/add/resto";
       (async () => {
         try {
@@ -96,13 +102,25 @@ const AddResto = () => {
             ? `/resto/${user.resto.id}`
             : `/Resto/${res.data.data.resto.response.id}`;
 
+          if (!isResto) {
+            // Refect user new resto in global state
+            await API.get("/login")
+              .then((res) =>
+                dispatch({
+                  status: "login",
+                  payload: res.data,
+                })
+              )
+              .catch((err) => console.error(err));
+          }
+
           navigate(redirectUrl);
         } catch (err) {
           handleError(err);
         }
       })();
     },
-    [form.img, form.loc, form.title, navigate, isResto, user?.resto]
+    [form.img, form.loc, form.title, navigate, isResto, user?.resto, dispatch]
   );
 
   return (
@@ -140,6 +158,7 @@ const AddResto = () => {
               placeholder="Location"
               className="firsts"
               defaultValue={address}
+              disabled
             />
             <button className="secondbtn" onClick={toggle}>
               Select On Map
@@ -147,7 +166,9 @@ const AddResto = () => {
             </button>
           </Flex>
           <WrapperMain>
-            <button onClick={handleSubmit}>Save</button>
+            <button onClick={handleSubmit}>
+              {isLoading ? "Loading..." : "Save"}
+            </button>
           </WrapperMain>
         </Wrapper>
       </Wrappper>

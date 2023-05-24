@@ -1,9 +1,9 @@
 import { io } from "socket.io-client";
 
 const socket = (userId) => {
-  return io("http://localhost:5001", {
+  return io(process.env.REACT_APP_BE, {
     cors: {
-      origin: "http://localhost:5001",
+      origin: process.env.REACT_APP_BE,
       methods: ["GET", "POST"],
     },
     transports: ["websocket"],

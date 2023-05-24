@@ -249,15 +249,15 @@ export const CardResto = styled.div`
   }
 `;
 export const CardNear = styled.div`
-  max-width: 245px;
-  min-width: 245px;
-  min-height: 260px;
+  width: 245px;
+  height: 295px;
   background: #ffffff;
   border-radius: 5px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 10px;
+  padding-bottom: 0;
   cursor: pointer;
   p {
     font-family: "serif";
@@ -278,8 +278,8 @@ export const CardNear = styled.div`
   > img {
     background: #222;
     min-width: 100%;
-    height: 160px;
     margin-bottom: 0;
+    height: 160px;
     border-radius: 5px;
   }
 
@@ -290,9 +290,11 @@ export const CardNear = styled.div`
     div {
       display: flex;
       align-items: center;
+      margin-top: 5px;
       img {
         width: 30px;
         height: 50%;
+        margin-right: 5px;
       }
       p {
         font-family: "Abhaya Libre ExtraBold";

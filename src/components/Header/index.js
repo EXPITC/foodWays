@@ -23,6 +23,7 @@ const Header = ({ trigger, noTroll }) => {
     return state;
   }, [state]);
   const isOwner = user?.role === "owner" ? true : false;
+  const restoId = user?.resto?.id || "";
 
   const [total, setTotal] = useState(0);
 
@@ -47,25 +48,25 @@ const Header = ({ trigger, noTroll }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trigger, isLogin]);
 
-  const [resto, setResto] = useState(null);
+  // const [resto, setResto] = useState(null);
 
-  useEffect(() => {
-    if (!isLogin) return;
-    const controller = new AbortController();
-    const signal = controller.signal;
-    (async () => {
-      await API.get(`/resto`, { signal })
-        .then((res) => {
-          if (!res) return;
-          setResto(res.data.data.resto.data);
-        })
-        .catch((err) => {
-          handleError(err);
-        });
-    })();
-    return () => controller.abort();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLogin]);
+  // useEffect(() => {
+  //   if (!isLogin) return;
+  //   const controller = new AbortController();
+  //   const signal = controller.signal;
+  //   (async () => {
+  //     await API.get(`/resto`, { signal })
+  //       .then((res) => {
+  //         if (!res) return;
+  //         setResto(res.data.data.resto.data);
+  //       })
+  //       .catch((err) => {
+  //         handleError(err);
+  //       });
+  //   })();
+  //   return () => controller.abort();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [isLogin]);
 
   return (
     <>
@@ -79,7 +80,7 @@ const Header = ({ trigger, noTroll }) => {
             {isLogin ? (
               <>
                 {isOwner ? (
-                  <Link className="cart" to={`/Resto/${user?.resto?.id}`}>
+                  <Link className="cart" to={`/Resto/${restoId}`}>
                     <img
                       style={{ width: "50px", height: "50px" }}
                       src={Shop}

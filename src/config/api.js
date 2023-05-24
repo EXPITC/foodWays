@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const API = axios.create({
-  baseURL: "http://localhost:5001/api/v1/",
+  baseURL: process.env.REACT_APP_API_ENDPOINT,
 });
 
 // export const setAuthToken = (token) => {
@@ -14,15 +14,15 @@ export const API = axios.create({
 
 export const handleError = (err) => {
   if (err.response) {
-    console.log(err.response?.data);
-    console.log(err.response?.data?.message);
-    console.log(err.response?.status);
+    console.error(err.response?.data);
+    console.error(err.response?.data?.message);
+    console.error(err.response?.status);
   }
   if (err.response?.status === 401) {
     alert(err.response.data.err);
   }
   if (err.response === 404) {
-    console.log("page not found");
+    console.info("page not found");
   } else if (err.request) {
     console.error(err.request);
     console.error(err.massage);

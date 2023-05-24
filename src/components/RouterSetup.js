@@ -53,8 +53,13 @@ const RouterSetup = () => {
             {isOwner ? (
               <>
                 <Route path="/Transaction" element={<TransactionPage />} />
-                <Route path="/Add-Menu" element={<AddMenu />} />
-                <Route path="/Edit-Menu/:id" element={<AddMenu Edit />} />
+                {!!user?.resto && (
+                  <>
+                    <Route path="/Add-Menu" element={<AddMenu />} />
+                    <Route path="/Edit-Menu/:id" element={<AddMenu Edit />} />
+                  </>
+                )}
+
                 <Route path="/Resto" element={<AddResto />} />
               </>
             ) : (

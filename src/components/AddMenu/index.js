@@ -7,19 +7,22 @@ import { Wrapper, WrapperMain, Flex } from "./AddMenu.styled";
 import { useNavigate, useParams } from "react-router";
 import { UserContext } from "../../Context/userContext";
 
-const AddMenu = (Edit) => {
-  const { id } = useParams();
+const AddMenu = ({ Edit = false }) => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const { state } = useContext(UserContext);
+
   const restoId = state.user?.resto?.id;
+
   const [form, setForm] = useState({
     title: "",
     image: "",
     price: "",
   });
-  const [curretImage, setCurretImage] = useState("");
 
+  const [curretImage, setCurretImage] = useState("");
   const [pre, setPre] = useState(Clip);
+  const [isLoading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({
@@ -37,6 +40,7 @@ const AddMenu = (Edit) => {
   };
   const handleSubmit = useCallback(
     (e) => {
+      setLoading(true);
       (async () => {
         try {
           e.preventDefault();
@@ -51,7 +55,9 @@ const AddMenu = (Edit) => {
             formData.set("image", form?.image[0], form?.image[0]?.name);
           }
           formData.set("price", form.price);
-          Edit
+          console.log(!!Edit, "WHAT??");
+          console.log(Edit ? "hey" : "hoo");
+          !!Edit
             ? await API.patch("/product/" + id, formData, config)
             : await API.post("/add/product", formData, config);
           if (Edit) return navigate("/resto/" + restoId);
@@ -61,6 +67,7 @@ const AddMenu = (Edit) => {
             price: "",
           });
           setPre(Clip);
+          setLoading(false);
         } catch (err) {
           handleError(err);
         }
@@ -133,7 +140,9 @@ const AddMenu = (Edit) => {
           value={form.price}
         />
         <WrapperMain>
-          <button onClick={handleSubmit}>Save</button>
+          <button onClick={handleSubmit}>
+            {isLoading ? "Loading..." : "Save"}
+          </button>
         </WrapperMain>
       </Wrapper>
     </>

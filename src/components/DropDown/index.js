@@ -31,7 +31,7 @@ const DropDown = ({ logout, handleDropdown }) => {
                   <p>Profile Partner</p>
                 </JustWrap>
               </Link>
-              <Link to="/Add-Menu">
+              <Link to={!!user?.resto ? "/Add-Menu" : "/Resto"}>
                 <JustWrap>
                   <Icon src={foodIcon} />
                   <p>Add Menu</p>
