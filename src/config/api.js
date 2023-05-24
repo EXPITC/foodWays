@@ -2,6 +2,9 @@ import axios from "axios";
 
 export const API = axios.create({
   baseURL: process.env.REACT_APP_API_ENDPOINT,
+  headers: {
+    "Access-Control-Allow-Origin": process.env.REACT_APP_API_ENDPOINT,
+  },
 });
 
 // export const setAuthToken = (token) => {
