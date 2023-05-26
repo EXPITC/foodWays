@@ -6,14 +6,16 @@ import userIcon from "../../img/user.svg";
 import logoutIcon from "../../img/logout.svg";
 import foodIcon from "../../img/foodicon.svg";
 import Transaction from "../../img/transaction.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const DropDown = ({ logout, handleDropdown }) => {
+  const navigate = useNavigate();
   const { state, dispatch } = useContext(UserContext);
   const handleLogout = () => {
     dispatch({
       status: "logout",
     });
     handleDropdown();
+    navigate("/");
   };
 
   const { user } = state;

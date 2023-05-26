@@ -1,9 +1,9 @@
 import { io } from "socket.io-client";
 
 const socket = (userId) => {
-  return io(process.env.REACT_APP_BE, {
+  return io(process.env.REACT_APP_API_SOCKET, {
     cors: {
-      origin: process.env.REACT_APP_BE,
+      origin: process.env.REACT_APP_API_SOCKET,
       methods: ["GET", "POST"],
     },
     transports: ["websocket"],

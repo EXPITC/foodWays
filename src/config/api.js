@@ -2,8 +2,10 @@ import axios from "axios";
 
 export const API = axios.create({
   baseURL: process.env.REACT_APP_API_ENDPOINT,
+  // Disable this for dev local
+  withCredentials: true,
   headers: {
-    "Access-Control-Allow-Origin": process.env.REACT_APP_API_ENDPOINT,
+    "Access-Control-Allow-Origin": process.env.REACT_APP_BE,
   },
 });
 
@@ -22,6 +24,7 @@ export const handleError = (err) => {
     console.error(err.response?.status);
   }
   if (err.response?.status === 401) {
+    if (!err.response.data.err) return;
     alert(err.response.data.err);
   }
   if (err.response === 404) {
