@@ -13,6 +13,7 @@ import { Wrapper, Bg } from "./Login.styled";
 
 const Login = ({ modal, handleCloseAuthModal, handleRegisterModal }) => {
   const navigate = useNavigate();
+  const [isLoading, setLoading] = useState(false);
   const { dispatch } = useContext(UserContext);
 
   const [form, setForm] = useState({
@@ -20,6 +21,7 @@ const Login = ({ modal, handleCloseAuthModal, handleRegisterModal }) => {
     password: "",
   });
   const handelChange = (e) => {
+    if (isLoading) return;
     setForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
@@ -28,7 +30,9 @@ const Login = ({ modal, handleCloseAuthModal, handleRegisterModal }) => {
 
   const handelLogin = async (e) => {
     try {
+      if (form.email.split(" ").length > 1) return;
       e.preventDefault();
+      setLoading(true);
       const config = {
         headers: {
           "Content-Type": "application/json",
@@ -47,8 +51,9 @@ const Login = ({ modal, handleCloseAuthModal, handleRegisterModal }) => {
         navigate("/Transaction");
       }
     } catch (err) {
+      setLoading(false);
       handleError(err);
-      if (err.response?.status === 400) {
+      if (err?.response?.data?.message) {
         alert(err.response.data.message);
       }
     }
@@ -61,7 +66,7 @@ const Login = ({ modal, handleCloseAuthModal, handleRegisterModal }) => {
             <div className="login-cointainer">
               <img
                 className="x-button-login2"
-                onClick={handleCloseAuthModal}
+                onClick={isLoading ? null : handleCloseAuthModal}
                 src={Xbtns}
                 alt="close button"
               />
@@ -81,8 +86,11 @@ const Login = ({ modal, handleCloseAuthModal, handleRegisterModal }) => {
                   placeholder="password"
                   onChange={handelChange}
                 />
-                <button className="btnlogin2" onClick={handelLogin}>
-                  LOGIN
+                <button
+                  className="btnlogin2"
+                  onClick={isLoading ? null : handelLogin}
+                >
+                  {isLoading ? "Loading..." : "LOGIN"}
                 </button>
                 <p className="dont-have-acc">
                   Don't have an account ?{" "}

@@ -9,6 +9,7 @@ const Register = ({ modal, handleCloseAuthModal, handleLoginModal }) => {
   const { dispatch } = useContext(UserContext);
 
   const navigate = useNavigate();
+  const [isLoading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     email: "",
@@ -19,6 +20,7 @@ const Register = ({ modal, handleCloseAuthModal, handleLoginModal }) => {
     role: "",
   });
   const handelChange = (e) => {
+    if (isLoading) return;
     setForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
@@ -27,7 +29,10 @@ const Register = ({ modal, handleCloseAuthModal, handleLoginModal }) => {
 
   const handelSubmit = async (e) => {
     try {
+      if (form.email.split(" ").length > 1) return;
       e.preventDefault();
+      setLoading(true);
+
       const config = {
         headers: {
           "Content-Type": "application/json",
@@ -35,7 +40,7 @@ const Register = ({ modal, handleCloseAuthModal, handleLoginModal }) => {
       };
       const body = JSON.stringify(form);
       const response = await API.post("/register", body, config);
-      if (response?.status === 201) {
+      if (response?.status === 409) {
         return alert(response.data.message);
       }
 
@@ -46,14 +51,14 @@ const Register = ({ modal, handleCloseAuthModal, handleLoginModal }) => {
         });
         handleCloseAuthModal();
       }
-      // console.log(response.data.data.user.role);
       if (response.data.data.user.role === "owner") {
         navigate("/Transaction");
       }
     } catch (err) {
+      setLoading(false);
       handleError(err);
-      if (err.response?.status === 400) {
-        alert(err.response.data.messsage);
+      if (err.response.data.message) {
+        alert(err.response.data.message);
       }
     }
   };
@@ -65,7 +70,7 @@ const Register = ({ modal, handleCloseAuthModal, handleLoginModal }) => {
             <div className="singup2-cointainer">
               <img
                 className="x-button-singup2"
-                onClick={handleCloseAuthModal}
+                onClick={isLoading ? null : handleCloseAuthModal}
                 src={Xbtns}
                 alt=""
               />
@@ -80,7 +85,7 @@ const Register = ({ modal, handleCloseAuthModal, handleLoginModal }) => {
                 />
                 <input
                   autoComplete={form.password}
-                  type="pas"
+                  type="password"
                   name="password"
                   placeholder="Password"
                   onChange={handelChange}
@@ -115,8 +120,12 @@ const Register = ({ modal, handleCloseAuthModal, handleLoginModal }) => {
                   <option value="costumer">Costumer</option>
                   <option value="owner">Owner</option>
                 </select>
-                <button className="btnsingup2" onClick={handelSubmit}>
-                  SINGUP
+                <button
+                  type="submit"
+                  className="btnsingup2"
+                  onClick={isLoading ? null : handelSubmit}
+                >
+                  {isLoading ? "Loading..." : "SINGUP"}
                 </button>
                 <p className="already-have-acc">
                   Already have an account ?{" "}
