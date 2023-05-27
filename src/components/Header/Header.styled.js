@@ -42,10 +42,12 @@ export const Wrap = styled.div`
   justify-content: center;
   align-items: center;
   img {
-    margin-left: 23px;
     &:hover {
       opacity: 0.5;
     }
+  }
+  .cart {
+    margin-right: 23px;
   }
   p {
     background: red;

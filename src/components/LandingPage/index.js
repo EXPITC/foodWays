@@ -10,6 +10,8 @@ import poly from "../../img/poly.svg";
 import Pizza from "../../img/pizza.svg";
 import Icon from "../../img/Icon.svg";
 import Trolly from "../../img/Trolly.svg";
+import Shop from "../../img/shop.png";
+
 import {
   WrapperYellow,
   OneLineFlexTop,
@@ -143,13 +145,22 @@ const LandingPage = () => {
           <div>
             {isLogin ? (
               <>
-                {isCustomer && (
+                {isCustomer ? (
                   <Link to={total !== 0 ? "/cart" : "/resto"}>
                     {total !== 0 && <p>{total}</p>}
                     <ImgTrolly src={Trolly} alt="Trolly" />
                   </Link>
+                ) : (
+                  <Link className="cart" to={`/Resto/${user?.resto?.id || ""}`}>
+                    <img
+                      style={{ width: "50px", height: "50px" }}
+                      src={Shop}
+                      alt="shop"
+                    />
+                  </Link>
                 )}
                 <ImgProfile
+                  className="profile"
                   src={user.image}
                   onClick={handleDropdown}
                   alt="Profile"
