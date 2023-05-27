@@ -120,7 +120,6 @@ export const OneLineFlexTop = styled.div`
     margin-left: 16px;
     border: 0;
     text-align: center;
-    padding-bottom: 3px;
     font-size: var(--FontSmall);
     color: white;
     font-weight: bold;
@@ -177,8 +176,10 @@ export const ImgPizza = styled.img`
 `;
 export const ImgProfile = styled.img`
   margin-bottom: -5px;
-  width: 60px;
-  height: 60px;
+  min-width: 60px;
+  min-height: 60px;
+  max-height: 60px;
+  max-width: 60px;
   border: 1px solid black;
   border-radius: 50%;
   opacity: 1 !important;
