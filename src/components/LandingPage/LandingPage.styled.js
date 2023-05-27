@@ -57,14 +57,23 @@ export const OneLineFlexTop = styled.div`
   display: flex;
   flex-wrap: wrap;
   height: 84px;
-  /* border:1px solid black; */
+  /* border: 1px solid black; */
   justify-content: space-between;
   align-items: center;
-  &:hover {
-    p {
+  align-content: center;
+
+  > div {
+    height: fit-content;
+    align-items: center;
+  }
+
+  .cart {
+    margin-right: 23px;
+    &:hover {
       opacity: 0.5;
     }
   }
+
   p {
     background: red;
     height: 15px;
@@ -77,36 +86,41 @@ export const OneLineFlexTop = styled.div`
     margin-left: 20px !important;
     z-index: 99 !important;
     position: absolute !important;
-  }
-  /* .poly {
-        opacity:0;
-        position:absolute;
-        animation: a 1s ease-out forwards;
-        animation-delay: 0.3s;
-        @keyframes a { 
-        0%{
-            opacity:0;
-            transform: translateX(60px)translateY(0px);
-        }
-        80%{
-            transform: translateX(60px)translateY(0px);
-        }
-        90%{
-            opacity:0.5;
-        }
-        100% {
-            transform: translateX(60px)translateY(-30px);
-            opacity:1;
-        }
+    &:hover {
+      opacity: 0.5;
     }
-    } */
+  }
+  /* poly { */
+  /*   opacity: 0; */
+  /*   position: absolute; */
+  /*   animation: a 1s ease-out forwards; */
+  /*   animation-delay: 0.3s; */
+  /*   @keyframes a { */
+  /*     0% { */
+  /*       opacity: 0; */
+  /*       transform: translateX(60px) translateY(0px); */
+  /*     } */
+  /*     80% { */
+  /*       transform: translateX(60px) translateY(0px); */
+  /*     } */
+  /*     90% { */
+  /*       opacity: 0.5; */
+  /*     } */
+  /*     100% { */
+  /*       transform: translateX(60px) translateY(-30px); */
+  /*       opacity: 1; */
+  /*     } */
+  /*   } */
+  /* } */
   button {
     width: 100px;
     height: 30px;
     background: #433434;
     border-radius: 5px;
     margin-left: 16px;
-    border: 0px;
+    border: 0;
+    text-align: center;
+    padding-bottom: 3px;
     font-size: var(--FontSmall);
     color: white;
     font-weight: bold;
@@ -162,18 +176,16 @@ export const ImgPizza = styled.img`
   height: 100%;
 `;
 export const ImgProfile = styled.img`
+  margin-bottom: -5px;
   width: 60px;
   height: 60px;
-  border: 2px solid #433434;
+  border: 1px solid black;
   border-radius: 50%;
+  opacity: 1 !important;
+  cursor: pointer;
 `;
 export const ImgTrolly = styled.img`
-  /* &:after {
-        content: '3';
-    } */
-  padding-bottom: 10%;
-  /* width: 60px;
-    height: 60px; */
+  padding-bottom: 10px;
   margin-right: 23px;
   &:hover {
     opacity: 0.5;
