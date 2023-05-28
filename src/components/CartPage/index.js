@@ -23,6 +23,7 @@ import {
   Wrap1,
   Wrap2,
   Wrap3,
+  Center,
 } from "./CartPage.styled";
 import map from "../../img/map.svg";
 import plus from "../../img/+.svg";
@@ -290,108 +291,114 @@ const CartPage = () => {
       )}
       {far && <Map toggle={handleConfirm} startLoc={start} far />}
       <Header trigger={transaction} />
-      <Wrapper>
-        <h1>{resto?.title}, Menus</h1>
-        <h2>Delivery Location</h2>
-        <WrapContent>
-          <div>
-            <p>{address?.display_name}</p>
-          </div>
-          <button onClick={openMap}>
-            Select On Map <img src={map} alt="map" />
-          </button>
-        </WrapContent>
-        <h2>Review Your Order</h2>
-        <WrapOrder>
-          <div className="over">
-            <WrapOrder2>
-              {/* TC~REPEAT */}
+      {isLoading ? (
+        <Center>
+          <h3>Loading...</h3>
+        </Center>
+      ) : (
+        <Wrapper>
+          <h1>{resto?.title}, Menus</h1>
+          <h2>Delivery Location</h2>
+          <WrapContent>
+            <div>
+              <p>{address?.display_name}</p>
+            </div>
+            <button onClick={openMap}>
+              Select On Map <img src={map} alt="map" />
+            </button>
+          </WrapContent>
+          <h2>Review Your Order</h2>
+          <WrapOrder>
+            <div className="over">
+              <WrapOrder2>
+                {/* TC~REPEAT */}
 
-              {orders.map((order, index) => {
-                return (
-                  <Flex key={order.id + index}>
-                    <Wrap1>
-                      <img src={order.img} alt="product" />
-                      <Wrap2>
-                        <Wrap3>
-                          <h4>{order.title}</h4>
-                          <p>
-                            {convertRupiah.convert(
-                              order.order.qty * order.price
-                            )}
-                          </p>
-                        </Wrap3>
-                        <Wrap3>
-                          <div>
+                {orders.map((order, index) => {
+                  return (
+                    <Flex key={order.id + index}>
+                      <Wrap1>
+                        <img src={order.img} alt="product" />
+                        <Wrap2>
+                          <Wrap3>
+                            <h4>{order.title}</h4>
+                            <p>
+                              {convertRupiah.convert(
+                                order.order.qty * order.price
+                              )}
+                            </p>
+                          </Wrap3>
+                          <Wrap3>
+                            <div>
+                              {!transactionIdle && (
+                                <button
+                                  onClick={() => {
+                                    lessHandle(order.id);
+                                  }}
+                                >
+                                  <img src={min} alt="min" />
+                                </button>
+                              )}
+
+                              <h4 className="pinkBg">{order.order.qty}</h4>
+                              {!transactionIdle && (
+                                <button
+                                  onClick={() => {
+                                    addHandle(order.id);
+                                  }}
+                                >
+                                  <img src={plus} alt="plus" />
+                                </button>
+                              )}
+                            </div>
                             {!transactionIdle && (
                               <button
                                 onClick={() => {
-                                  lessHandle(order.id);
+                                  orderDelete(order.order.id);
                                 }}
                               >
-                                <img src={min} alt="min" />
+                                <img src={trash} alt="trash" />
                               </button>
                             )}
-
-                            <h4 className="pinkBg">{order.order.qty}</h4>
-                            {!transactionIdle && (
-                              <button
-                                onClick={() => {
-                                  addHandle(order.id);
-                                }}
-                              >
-                                <img src={plus} alt="plus" />
-                              </button>
-                            )}
-                          </div>
-                          {!transactionIdle && (
-                            <button
-                              onClick={() => {
-                                orderDelete(order.order.id);
-                              }}
-                            >
-                              <img src={trash} alt="trash" />
-                            </button>
-                          )}
-                        </Wrap3>
-                      </Wrap2>
-                    </Wrap1>
-                  </Flex>
-                );
-              })}
-            </WrapOrder2>
-          </div>
-          <FlexCollum>
-            <tb>
-              <Wrap3>
-                <Pp>Subtotal</Pp>
-                <Pp r>{convertRupiah.convert(transaction?.price)}</Pp>
-              </Wrap3>
-              <Wrap3>
-                <Pp>Qty</Pp>
-                <Pp>{total}</Pp>
-              </Wrap3>
-              <Wrap3>
-                <Pp>Ongkir</Pp>
-                <Pp r={true}>Rp.10.000</Pp>
-              </Wrap3>
-            </tb>
-            <Wrap1>
-              <Pp r={true} b={true}>
-                TOTAL
-              </Pp>
-              <Pp r>{convertRupiah.convert(transaction?.price + 10000)}</Pp>
-            </Wrap1>
-          </FlexCollum>
-        </WrapOrder>
-        <Orderbtn>
-          {orderMap ? (
-            <button onClick={handleMapFar}>See How Far?</button>
-          ) : (
-            <button onClick={handleOrder}>Order</button>
-          )}
-        </Orderbtn>
-      </Wrapper>
+                          </Wrap3>
+                        </Wrap2>
+                      </Wrap1>
+                    </Flex>
+                  );
+                })}
+              </WrapOrder2>
+            </div>
+            <FlexCollum>
+              <tb>
+                <Wrap3>
+                  <Pp>Subtotal</Pp>
+                  <Pp r>{convertRupiah.convert(transaction?.price)}</Pp>
+                </Wrap3>
+                <Wrap3>
+                  <Pp>Qty</Pp>
+                  <Pp>{total}</Pp>
+                </Wrap3>
+                <Wrap3>
+                  <Pp>Ongkir</Pp>
+                  <Pp r={true}>Rp.10.000</Pp>
+                </Wrap3>
+              </tb>
+              <Wrap1>
+                <Pp r={true} b={true}>
+                  TOTAL
+                </Pp>
+                <Pp r>{convertRupiah.convert(transaction?.price + 10000)}</Pp>
+              </Wrap1>
+            </FlexCollum>
+          </WrapOrder>
+          <Orderbtn>
+            {orderMap ? (
+              <button onClick={handleMapFar}>See How Far?</button>
+            ) : (
+              <button onClick={handleOrder}>Order</button>
+            )}
+          </Orderbtn>
+        </Wrapper>
+      )}
     </>
   );
 };

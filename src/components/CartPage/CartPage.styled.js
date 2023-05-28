@@ -228,3 +228,12 @@ export const Orderbtn = styled.div`
     }
   }
 `;
+
+export const Center = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  width: 100%;
+  text-align: center;
+`;
