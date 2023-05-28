@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const Wrapper = styled.div`
   position: relative;
-  z-index: -1;
+  z-index: 0;
   width: 85%;
   margin: 0 auto;
   display: flex;
@@ -59,7 +59,7 @@ export const WrapCard = styled.div`
   display: flex;
   max-width: 1070px;
   min-width: 70%;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: wrap;
   flex-grow: 3;
   gap: 1rem;
