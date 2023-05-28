@@ -2,13 +2,14 @@ import { React, useState, useEffect, useContext, useMemo } from "react";
 import ReactMapGL, { Marker, Layer, Source } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { UserContext } from "../../Context/userContext";
-import { API, handleError } from "../../config/api";
+import { handleError } from "../../config/api";
 
 import close from "../../img/close.png";
 import maponloc from "../../img/onloc.svg";
 import { Wrapper, Bg, Card } from "./Map.styled";
 import socketIo from "../../utils/socket";
 import toMinutes from "../../utils/toMinutes";
+import axios from "axios";
 
 const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
   const [viewState, setViewState] = useState(false);
@@ -60,7 +61,7 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
     (async () => {
       if (!far) return;
       try {
-        await fetch
+        await axios
           .get(
             `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${end[1]}&lon=${end[0]}`,
             { signal }
@@ -76,14 +77,14 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
   }, [end, far, loc]);
 
   async function getAddress(lat, lon) {
-    await fetch
+    await axios
       .get(
         `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
       )
       .then((res) => {
         setAddress(res?.data);
       })
-      .cAtch((err) => {
+      .catch((err) => {
         handleError(err);
       });
   }
@@ -99,6 +100,7 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
   const [routeLayer, setRouteLayer] = useState(false);
 
   useEffect(() => {
+    if (!far) return;
     const controller = new AbortController();
     const signal = controller.signal;
     // Get route with end
@@ -321,7 +323,7 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
               {address?.display_name ? "Delivery location" : "Load location..."}
             </h3>
             <div>
-              <div className="adasdasfaw">
+              <div className="address">
                 <img src={maponloc} alt="onloc" />
                 <div>
                   <h5>{nameAddress ? nameAddress[0] : "not found"}</h5>
