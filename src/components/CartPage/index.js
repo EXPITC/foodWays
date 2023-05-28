@@ -44,16 +44,17 @@ const CartPage = () => {
   const { user } = state;
   const socket = socketIo(user?.id);
 
+  const [isLoading, setLoading] = useState(false);
   const [form, setForm] = useState({
     location: user.location,
   });
 
-  const [total, setTotal] = useState(0);
+  const [total, setTotal] = useState(false);
   const [orders, setOrders] = useState([]);
   const [resto, setResto] = useState();
 
   // back when order got deleted or zero val
-  if (total === 0) {
+  if (total === 0 && !isLoading) {
     resto?.id === undefined
       ? navigate(`/resto`)
       : navigate(`/resto/${resto.id}`);
@@ -69,21 +70,27 @@ const CartPage = () => {
   const [address, setAddress] = useState(null);
   const [loc, setLoc] = useState(user.location?.split(" "));
 
-  const updateTransaction = async () => {
-    await API.get("/order/count")
-      .then((res) => setTotal(res.data.total))
-      .catch((err) => handleError(err));
-    await API.get("/transaction/idle")
-      .then((res) => {
-        setOrders(res.data.data.transactions[0].product);
-        setTransaction(res.data.data.transactions[0]);
-      })
-      .catch((err) => handleError(err));
+  const updateTransaction = async (signal) => {
+    try {
+      setLoading(true);
+      await API.get("/order/count", { signal })
+        .then((res) => setTotal(res.data.total))
+        .catch((err) => handleError(err));
+      await API.get("/transaction/idle", { signal })
+        .then((res) => {
+          setOrders(res.data.data.transactions[0].product);
+          setTransaction(res.data.data.transactions[0]);
+        })
+        .catch((err) => handleError(err));
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    let controller = new AbortController();
-    updateTransaction();
+    const controller = new AbortController();
+    const signal = controller.signal;
+    updateTransaction(signal);
     return () => controller.abort();
   }, []);
 
