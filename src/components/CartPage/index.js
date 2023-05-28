@@ -179,11 +179,13 @@ const CartPage = () => {
     let controller = new AbortController();
     (async () => {
       try {
-        await API.get(
-          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc[0]}&lon=${loc[1]}`
-        ).then((res) => {
-          setAddress(res.data);
-        });
+        await fetch
+          .get(
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc[0]}&lon=${loc[1]}`
+          )
+          .then((res) => {
+            setAddress(res.data);
+          });
         setForm((prev) => ({
           ...prev,
           location: loc[0] + " " + loc[1],
