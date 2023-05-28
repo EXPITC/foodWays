@@ -292,6 +292,8 @@ export const CardNear = styled.div`
     background: #222;
     min-width: 100%;
     margin-bottom: 0;
+    border-radius: 4px;
+    object-fit: cover;
     height: 160px;
     border-radius: 5px;
   }
