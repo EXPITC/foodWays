@@ -298,12 +298,7 @@ const CartPage = () => {
           <div className="over">
             <WrapOrder2>
               {/* TC~REPEAT */}
-              {
-                // total === 0 &&
-                // (resto?.id === undefined
-                //   ? navigate(`/resto`)
-                //   : navigate(`/resto/${resto.id}`))
-              }
+
               {orders.map((order, index) => {
                 return (
                   <Flex key={order.id + index}>

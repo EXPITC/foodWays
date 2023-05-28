@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 const EditProfile = () => {
   const navigate = useNavigate();
   const [showMap, setShowMap] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const toggle = () => setShowMap(!showMap);
   const { state, dispatch } = useContext(UserContext);
   const { user } = state;
@@ -60,6 +61,7 @@ const EditProfile = () => {
   }, [loc]);
 
   const handleChange = (e) => {
+    if (isLoading) return;
     setForm({
       ...form,
       [e.target.name]:
@@ -75,7 +77,9 @@ const EditProfile = () => {
   };
 
   const handleSubmit = async (e) => {
+    if (isLoading) return;
     try {
+      setLoading(true);
       e.preventDefault();
 
       let config = {
@@ -113,6 +117,7 @@ const EditProfile = () => {
 
       navigate("/Profile");
     } catch (err) {
+      setLoading(false);
       handleError(err);
     }
   };
@@ -131,6 +136,7 @@ const EditProfile = () => {
             className="first"
             value={form.fullname}
             onChange={handleChange}
+            disabled={isLoading ? true : false}
           />
           <label className="second" htmlFor="imgFile">
             Attach Image
@@ -141,6 +147,7 @@ const EditProfile = () => {
               id="imgFile"
               hidden
               onChange={handleChange}
+              disabled={isLoading ? true : false}
             />
           </label>
         </Flex>
@@ -151,6 +158,7 @@ const EditProfile = () => {
           placeholder="Email"
           value={form.email}
           onChange={handleChange}
+          disabled={isLoading ? true : false}
         ></input>
         <input
           className="third"
@@ -159,6 +167,7 @@ const EditProfile = () => {
           placeholder="Phone"
           value={form.phone}
           onChange={handleChange}
+          disabled={isLoading ? true : false}
         ></input>
         <Flex btwn>
           <input
@@ -175,7 +184,9 @@ const EditProfile = () => {
           </button>
         </Flex>
         <WrapperMain>
-          <button onClick={handleSubmit}>Save</button>
+          <button onClick={isLoading ? null : handleSubmit}>
+            {isLoading ? "Loading..." : "Save"}
+          </button>
         </WrapperMain>
       </Wrapper>
     </>
