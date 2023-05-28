@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 const EditProfile = () => {
   const navigate = useNavigate();
   const [showMap, setShowMap] = useState(false);
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const toggle = () => setShowMap(!showMap);
   const { state, dispatch } = useContext(UserContext);
   const { user } = state;
