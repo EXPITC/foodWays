@@ -177,7 +177,8 @@ const CartPage = () => {
   useEffect(() => {
     if (!loc) return;
     let controller = new AbortController();
-    const signal = controller.signal(async () => {
+    const signal = controller.signal;
+    (async () => {
       try {
         await fetch(
           `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc[0]}&lon=${loc[1]}`,
