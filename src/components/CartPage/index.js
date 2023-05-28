@@ -32,6 +32,7 @@ import trash from "../../img/Trash.svg";
 import Header from "../Header";
 import Map from "../Map";
 import { useNavigate } from "react-router";
+import axios from "axios";
 
 const CartPage = () => {
   const [open, setOpen] = useState(false);
@@ -188,12 +189,14 @@ const CartPage = () => {
     const signal = controller.signal;
     (async () => {
       try {
-        await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc[0]}&lon=${loc[1]}`,
-          { signal }
-        ).then((res) => {
-          setAddress(res.data);
-        });
+        await axios
+          .get(
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc[0]}&lon=${loc[1]}`,
+            { signal }
+          )
+          .then((res) => {
+            setAddress(res.data);
+          });
         setForm((prev) => ({
           ...prev,
           location: loc[0] + " " + loc[1],
