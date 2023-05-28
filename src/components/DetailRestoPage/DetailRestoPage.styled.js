@@ -59,7 +59,7 @@ export const WrapCard = styled.div`
   display: flex;
   max-width: 1070px;
   min-width: 70%;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: wrap;
   flex-grow: 3;
   gap: 1rem;
