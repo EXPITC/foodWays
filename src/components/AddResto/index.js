@@ -34,7 +34,7 @@ const AddResto = () => {
   );
   const [address, setAddress] = useState("");
   useEffect(() => {
-    if (loc.length <= 0) return;
+    if (!(loc[0] && loc[1])) return;
     const controller = new AbortController();
     const signal = controller.signal;
     (async () => {
