@@ -177,15 +177,14 @@ const CartPage = () => {
   useEffect(() => {
     if (!loc) return;
     let controller = new AbortController();
-    (async () => {
+    const signal = controller.signal(async () => {
       try {
-        await fetch
-          .get(
-            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc[0]}&lon=${loc[1]}`
-          )
-          .then((res) => {
-            setAddress(res.data);
-          });
+        await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc[0]}&lon=${loc[1]}`,
+          { signal }
+        ).then((res) => {
+          setAddress(res.data);
+        });
         setForm((prev) => ({
           ...prev,
           location: loc[0] + " " + loc[1],

@@ -96,7 +96,7 @@ export const Card = styled.div`
     width: 55px;
     height: 55px;
   }
-  .adasdasfaw {
+  .address {
     /* border: 1px solid black; */
     display: flex;
     height: 55px;
