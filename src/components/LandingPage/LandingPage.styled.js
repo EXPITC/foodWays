@@ -289,7 +289,7 @@ export const CardNear = styled.div`
     font-size: 18px;
   }
   > img {
-    background: #222;
+    background: transparent;
     min-width: 100%;
     margin-bottom: 0;
     object-fit: cover;

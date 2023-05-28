@@ -91,7 +91,7 @@ export const CardMenu = styled.div`
     margin-top: 12px;
     border-radius: 4px;
     object-fit: cover;
-    background: #222;
+    background: transparent;
     width: 224px;
     height: 134px;
   }
