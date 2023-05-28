@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const Head = styled.div`
   position: sticky;
+  z-index: 999;
   top: 0;
   background: var(--mainYellow);
   height: 91px;
