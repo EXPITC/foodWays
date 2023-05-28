@@ -192,7 +192,7 @@ const DetailRestoPage = (_req, _res) => {
       <Wrapper>
         <WrapCard>
           <div className="wrappertitle">
-            <h1>{resto.title}, Menus</h1>
+            <h1>{user?.resto?.title || resto.title}, Menus</h1>
             {isOwner === id && (
               <Link to="/resto">
                 <button className="redirectButton">Edit Resto</button>
