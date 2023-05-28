@@ -55,8 +55,6 @@ const AddMenu = ({ Edit = false }) => {
             formData.set("image", form?.image[0], form?.image[0]?.name);
           }
           formData.set("price", form.price);
-          console.log(!!Edit, "WHAT??");
-          console.log(Edit ? "hey" : "hoo");
           !!Edit
             ? await API.patch("/product/" + id, formData, config)
             : await API.post("/add/product", formData, config);

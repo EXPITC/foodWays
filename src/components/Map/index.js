@@ -58,30 +58,32 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
     const controller = new AbortController();
     const signal = controller.signal;
     (async () => {
-      if (far) {
-        try {
-          API.get(
+      if (!far) return;
+      try {
+        await fetch
+          .get(
             `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${end[1]}&lon=${end[0]}`,
             { signal }
-          ).then((res) => {
+          )
+          .then((res) => {
             setAddress(res?.data);
           });
-        } catch (err) {
-          console.error(err);
-        }
+      } catch (err) {
+        console.error(err);
       }
     })();
     return () => controller.abort();
   }, [end, far, loc]);
 
   async function getAddress(lat, lon) {
-    API.get(
-      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
-    )
+    await fetch
+      .get(
+        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
+      )
       .then((res) => {
         setAddress(res?.data);
       })
-      .catch((err) => {
+      .cAtch((err) => {
         handleError(err);
       });
   }
@@ -209,13 +211,11 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
     if (!user?.id) return;
 
     socket.on("connect", () => {
-      console.log(socket.connected);
+      console.info(socket.connected);
     });
 
     socket.emit("onTheWay", user.id);
     socket.on("otwData", (data) => {
-      // console.log("Whahahaha", data);
-      // console.log(data);
       setOtwOrder(data);
     });
 

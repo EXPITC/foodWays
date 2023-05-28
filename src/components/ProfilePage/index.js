@@ -29,7 +29,7 @@ const ProfilePage = () => {
   useEffect(() => {
     if (!user?.id) return;
     socket.on("connect", () => {
-      console.log(socket.connected);
+      console.info(socket.connected);
     });
 
     socket.on("new transaction", () => {
@@ -39,7 +39,6 @@ const ProfilePage = () => {
     socket.emit("load transaction", user.id);
     socket.on("transaction", (data) => {
       if (!data) return;
-      console.log(data);
       setHistoryTransaction(data);
     });
 
