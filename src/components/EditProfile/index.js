@@ -53,16 +53,13 @@ const EditProfile = () => {
             location: loc[0] + " " + loc[1],
           }));
         } catch (err) {
-          console.log(err.msg);
+          console.error(err.msg);
         }
       })();
     }
   }, [loc]);
 
-  console.log(form);
-
   const handleChange = (e) => {
-    console.log("WTF not get exec");
     setForm({
       ...form,
       [e.target.name]:
@@ -75,7 +72,6 @@ const EditProfile = () => {
         setPre(Clip);
       }
     }
-    console.log(form);
   };
 
   const handleSubmit = async (e) => {

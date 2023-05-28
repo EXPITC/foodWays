@@ -105,7 +105,6 @@ const CartPage = () => {
       transaction?.status === "Waiting Approve" ||
       transaction?.status === "On The Way"
     ) {
-      // console.log(transaction?.status)
       setOrderMap(true);
       setFar(true);
     }
@@ -115,7 +114,7 @@ const CartPage = () => {
     if (!user?.id) return;
 
     socket.on("connect", () => {
-      console.log(socket.connected);
+      console.info(socket.connected);
     });
     socket.on("connect_error", (err) => {
       console.error(err.message);

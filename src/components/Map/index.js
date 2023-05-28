@@ -209,13 +209,11 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
     if (!user?.id) return;
 
     socket.on("connect", () => {
-      console.log(socket.connected);
+      console.info(socket.connected);
     });
 
     socket.emit("onTheWay", user.id);
     socket.on("otwData", (data) => {
-      // console.log("Whahahaha", data);
-      // console.log(data);
       setOtwOrder(data);
     });
 

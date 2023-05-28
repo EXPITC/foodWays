@@ -19,7 +19,7 @@ const TransactionPage = () => {
     if (!socket.connected) socket.connect();
 
     socket.on("connect", () => {
-      console.log(socket.connected);
+      console.info(socket.connected);
       socket.emit("joinRoomOrder", { userId });
     });
     socket.on("disconnect", (reason) => {
@@ -39,8 +39,8 @@ const TransactionPage = () => {
     });
 
     return () => {
-      socket.off("connect", console.log(socket.connected));
-      socket.off("disconnect", console.log(socket.connected));
+      socket.off("connect", console.info(socket.connected));
+      socket.off("disconnect", console.info(socket.connected));
       socket.on("leaveRoomOrder", { userId });
       socket.disconnect();
     };

@@ -5,7 +5,7 @@ export const API = axios.create({
   // Disable this for dev local
   withCredentials: true,
   headers: {
-    "Access-Control-Allow-Origin": process.env.REACT_APP_BE,
+    "Access-Control-Allow-Origin": process.env.REACT_APP_API_ENDPOINT,
   },
 });
 
