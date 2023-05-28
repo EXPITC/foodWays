@@ -89,6 +89,8 @@ export const CardMenu = styled.div`
   img {
     margin-left: 10px;
     margin-top: 12px;
+    border-radius: 4px;
+    object-fit: cover;
     background: #222;
     width: 224px;
     height: 134px;
