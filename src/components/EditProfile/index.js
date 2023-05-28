@@ -136,7 +136,7 @@ const EditProfile = () => {
             className="first"
             value={form.fullname}
             onChange={handleChange}
-            disabled={isLoading ? true : false}
+            disabled={isLoading}
           />
           <label className="second" htmlFor="imgFile">
             Attach Image
@@ -147,7 +147,7 @@ const EditProfile = () => {
               id="imgFile"
               hidden
               onChange={handleChange}
-              disabled={isLoading ? true : false}
+              disabled={isLoading}
             />
           </label>
         </Flex>
@@ -158,7 +158,7 @@ const EditProfile = () => {
           placeholder="Email"
           value={form.email}
           onChange={handleChange}
-          disabled={isLoading ? true : false}
+          disabled={isLoading}
         ></input>
         <input
           className="third"
@@ -167,7 +167,7 @@ const EditProfile = () => {
           placeholder="Phone"
           value={form.phone}
           onChange={handleChange}
-          disabled={isLoading ? true : false}
+          disabled={isLoading}
         ></input>
         <Flex btwn>
           <input

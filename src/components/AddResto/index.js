@@ -34,7 +34,7 @@ const AddResto = () => {
   );
   const [address, setAddress] = useState("");
   useEffect(() => {
-    if (loc.length === 0) return;
+    if (loc.length <= 0) return;
     const controller = new AbortController();
     const signal = controller.signal;
     (async () => {
@@ -61,6 +61,7 @@ const AddResto = () => {
   let [pre, setPre] = useState(form.img || Clip);
 
   const handleChange = (e) => {
+    if (isLoading) return;
     setForm({
       ...form,
       [e.target.name]:
@@ -116,6 +117,7 @@ const AddResto = () => {
 
           navigate(redirectUrl);
         } catch (err) {
+          setLoading(false);
           handleError(err);
         }
       })();
@@ -138,6 +140,7 @@ const AddResto = () => {
               className="first"
               onChange={handleChange}
               value={form.title}
+              disabled={isLoading}
             />
             <label className="second" htmlFor="imgFile">
               Attach Image
@@ -147,6 +150,7 @@ const AddResto = () => {
                 name="img"
                 id="imgFile"
                 onChange={handleChange}
+                disabled={isLoading}
                 hidden
               />
             </label>
