@@ -41,6 +41,50 @@ const RouterSetup = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Info
+  useEffect(() => {
+    if (isLogin === null) return;
+    if (!isLogin) {
+      console.info(
+        "%cYou can use this resto account for admin page, in otherhand you can also use customer acc that already created, or you can just creating new acc for resto or customer its fine.",
+        "background-color: #FFC700; color: #433434; font-weight: 600; font-size: normal; text-align: left; overflow: hidden; border-radius: 2px; padding-left:10px; padding-top: 10px; padding-bottom:10px;"
+      );
+    }
+
+    console.info(
+      "%c* You can always open console log for more detail/info in all my project, thankyou.",
+      "color: #FFC700"
+    );
+    console.warn(
+      "%c *Please understand almost all of my projects use free tier server for backend. This means that some heavy lifting processes may take time to process or build due to free tier limitations, also almost free tiers need to be 'fired' first after not waking up within the allotted time, so I'm sorry if you've ever experienced a cold start. Thank you, for reading & understanding. \n tips: you can just keep refreshing the page or waiting patiently. Recommended the second option because its actually already hit the server just takes times to process due to cold start or free tier limitations.",
+      "background-color: #FFC700; color: #433434; font-weight: 600; font-size: normal; text-align: left; overflow: hidden; border-radius: 2px; padding-left:10px; padding-top: 10px; padding-bottom:10px;"
+    );
+
+    if (isLogin) return; //I know this redundant if but i want the position still print consecutive;
+    console.table([
+      {
+        email: "customer@mail.com",
+        password: "12345678",
+      },
+      {
+        email: "burgerking@mail.com",
+        password: "12345678",
+      },
+      {
+        email: "starbucks@mail.com",
+        password: "12345678",
+      },
+      {
+        email: "kfc@mail.com",
+        password: "12345678",
+      },
+      {
+        email: "jco@mail.com",
+        password: "12345678",
+      },
+    ]);
+  }, [isLogin]);
+
   return (
     <Router>
       <Routes>
