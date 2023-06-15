@@ -146,7 +146,7 @@ const DetailRestoPage = (_req, _res) => {
     } else {
       console.info("You still have order on resto " + lastResto?.title);
       console.info(
-        "After this if use want to change resto then update transaction status cancel "
+        "If you want to change resto then update transaction status cancel, go to other resto its will popup a new modal if not same with last resto."
       );
       setModalConfirmation(true);
     }
@@ -192,7 +192,7 @@ const DetailRestoPage = (_req, _res) => {
       <Wrapper>
         <WrapCard>
           <div className="wrappertitle">
-            <h1>{user?.resto?.title || resto.title}, Menus</h1>
+            <h1>{isOwner === id ? user?.resto?.title : resto.title}, Menus</h1>
             {isOwner === id && (
               <Link to="/resto">
                 <button className="redirectButton">Edit Resto</button>
