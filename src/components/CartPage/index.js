@@ -284,13 +284,7 @@ const CartPage = () => {
   return (
     <>
       {open && (
-        <Map
-          toggle={openMap}
-          setLocEdit={setLoc}
-          updateLoc={updateloc}
-          open
-          cart
-        />
+        <Map toggle={openMap} setLocEdit={setLoc} updateLoc={updateloc} cart />
       )}
       {far && <Map toggle={handleConfirm} startLoc={start} far />}
       <Header trigger={transaction} />
@@ -314,82 +308,103 @@ const CartPage = () => {
           <WrapOrder>
             <div className="over">
               <WrapOrder2>
-                {/* TC~REPEAT */}
+                <tbody>
+                  {/* TC~REPEAT */}
+                  {orders.map((order, index) => {
+                    return (
+                      <tr key={order.id + index}>
+                        <Flex>
+                          <Wrap1>
+                            <img src={order.img} alt="product" />
+                            <Wrap2>
+                              <Wrap3>
+                                <h4>{order.title}</h4>
+                                <p>
+                                  {convertRupiah.convert(
+                                    order.order.qty * order.price
+                                  )}
+                                </p>
+                              </Wrap3>
+                              <Wrap3>
+                                <div>
+                                  {!transactionIdle && (
+                                    <button
+                                      onClick={() => {
+                                        lessHandle(order.id);
+                                      }}
+                                    >
+                                      <img src={min} alt="min" />
+                                    </button>
+                                  )}
 
-                {orders.map((order, index) => {
-                  return (
-                    <Flex key={order.id + index}>
-                      <Wrap1>
-                        <img src={order.img} alt="product" />
-                        <Wrap2>
-                          <Wrap3>
-                            <h4>{order.title}</h4>
-                            <p>
-                              {convertRupiah.convert(
-                                order.order.qty * order.price
-                              )}
-                            </p>
-                          </Wrap3>
-                          <Wrap3>
-                            <div>
-                              {!transactionIdle && (
-                                <button
-                                  onClick={() => {
-                                    lessHandle(order.id);
-                                  }}
-                                >
-                                  <img src={min} alt="min" />
-                                </button>
-                              )}
-
-                              <h4 className="pinkBg">{order.order.qty}</h4>
-                              {!transactionIdle && (
-                                <button
-                                  onClick={() => {
-                                    addHandle(order.id);
-                                  }}
-                                >
-                                  <img src={plus} alt="plus" />
-                                </button>
-                              )}
-                            </div>
-                            {!transactionIdle && (
-                              <button
-                                onClick={() => {
-                                  orderDelete(order.order.id);
-                                }}
-                              >
-                                <img src={trash} alt="trash" />
-                              </button>
-                            )}
-                          </Wrap3>
-                        </Wrap2>
-                      </Wrap1>
-                    </Flex>
-                  );
-                })}
+                                  <h4 className="pinkBg">{order.order.qty}</h4>
+                                  {!transactionIdle && (
+                                    <button
+                                      onClick={() => {
+                                        addHandle(order.id);
+                                      }}
+                                    >
+                                      <img src={plus} alt="plus" />
+                                    </button>
+                                  )}
+                                </div>
+                                {!transactionIdle && (
+                                  <button
+                                    onClick={() => {
+                                      orderDelete(order.order.id);
+                                    }}
+                                  >
+                                    <img src={trash} alt="trash" />
+                                  </button>
+                                )}
+                              </Wrap3>
+                            </Wrap2>
+                          </Wrap1>
+                        </Flex>
+                      </tr>
+                    );
+                  })}
+                </tbody>
               </WrapOrder2>
             </div>
             <FlexCollum>
-              <tb>
-                <Wrap3>
-                  <Pp>Subtotal</Pp>
-                  <Pp r>{convertRupiah.convert(transaction?.price)}</Pp>
-                </Wrap3>
-                <Wrap3>
-                  <Pp>Qty</Pp>
-                  <Pp>{total}</Pp>
-                </Wrap3>
-                <Wrap3>
-                  <Pp>Ongkir</Pp>
-                  <Pp r={true}>Rp.10.000</Pp>
-                </Wrap3>
-              </tb>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <Wrap3>
+                        <Pp>Subtotal</Pp>
+                        <Pp r={"true"}>
+                          {convertRupiah.convert(transaction?.price)}
+                        </Pp>
+                      </Wrap3>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <Wrap3>
+                        <Pp>Qty</Pp>
+                        <Pp>{total}</Pp>
+                      </Wrap3>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <Wrap3>
+                        <Pp>Ongkir</Pp>
+                        <Pp r={"true"}>Rp.10.000</Pp>
+                      </Wrap3>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
               <Wrap1>
-                <Pp r={true} b={true}>
+                <Pp r={"true"} b={"true"}>
                   TOTAL
                 </Pp>
-                <Pp r>{convertRupiah.convert(transaction?.price + 10000)}</Pp>
+                <Pp r={"true"}>
+                  {convertRupiah.convert(transaction?.price + 10000)}
+                </Pp>
               </Wrap1>
             </FlexCollum>
           </WrapOrder>

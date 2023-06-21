@@ -149,6 +149,7 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
       }
     })();
     return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [end, start]);
 
   const startLayer = useMemo(
@@ -319,13 +320,12 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
         )}
         {loc && (
           <Card>
-            <h3>
-              {address?.display_name ? "Delivery location" : "Load location..."}
-            </h3>
+            {address?.display_name && <h3>Delivery location</h3>}
             <div>
               <div className="address">
                 <img src={maponloc} alt="onloc" />
                 <div>
+                  {!address?.display_name && <h3>Load location...</h3>}
                   <h5>{nameAddress ? nameAddress[0] : "not found"}</h5>
                   <p>{address?.display_name}</p>
                 </div>
@@ -335,7 +335,7 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
               <>
                 {cart ? (
                   <>
-                    {otwOrder && (
+                    {!otwOrder && (
                       <button
                         onClick={() => {
                           toggle();
@@ -361,9 +361,13 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
         )}
         {far && (
           <Card h={true}>
-            <h3> delivery location</h3>
+            <h3>
+              {otwOrder
+                ? "Driver is On The Way"
+                : "Waiting for the transaction to be approved"}
+            </h3>
             <div>
-              <div className="adasdasfaw">
+              <div className="address">
                 <img src={maponloc} alt="onloc" />
                 <div>
                   <h5>

@@ -50,8 +50,10 @@ const TransactionPage = () => {
   useEffect(() => {
     // get the transactions value
     if (!state?.user?.id) return;
+    console.log("hit?");
     socket.emit("transactions");
     socket.on("transactionsData", (value) => {
+      console.log({ value });
       setTransactions(value);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
