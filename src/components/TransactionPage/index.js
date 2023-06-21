@@ -61,8 +61,9 @@ const TransactionPage = () => {
 
   const handleApprove = (id) => {
     // socket.emit("otw");
+    socket.on("subTrans", id);
     socket.emit("accept", id);
-    // setRefresh(!refresh);
+
     socket.on("acceptData", (data) => {
       if (!data[1][0]) return;
       setTransactions((prev) => {
@@ -72,6 +73,8 @@ const TransactionPage = () => {
         });
       });
     });
+
+    socket.on("unsubTrans", id);
   };
   const handleCancel = (id) => {
     socket.emit("cancel", id);

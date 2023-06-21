@@ -286,7 +286,14 @@ const CartPage = () => {
       {open && (
         <Map toggle={openMap} setLocEdit={setLoc} updateLoc={updateloc} cart />
       )}
-      {far && <Map toggle={handleConfirm} startLoc={start} far />}
+      {far && (
+        <Map
+          toggle={handleConfirm}
+          startLoc={start}
+          far
+          transId={transaction?.id}
+        />
+      )}
       <Header trigger={transaction} />
       {isLoading ? (
         <Center>

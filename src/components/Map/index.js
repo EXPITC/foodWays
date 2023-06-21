@@ -11,7 +11,15 @@ import socketIo from "../../utils/socket";
 import toMinutes from "../../utils/toMinutes";
 import axios from "axios";
 
-const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
+const Map = ({
+  toggle,
+  far,
+  setLocEdit,
+  updateLoc,
+  startLoc,
+  cart,
+  transId,
+}) => {
   const [viewState, setViewState] = useState(false);
   const { state } = useContext(UserContext);
   const { user } = state;
@@ -222,14 +230,25 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
       setOtwOrder(data);
     });
 
+    if (transId) {
+      socket.emit("subTrans", transId);
+      socket.on("confirmTransaction", () => {
+        socket.emit("onTheWay", user.id);
+        socket.on("otwData", (data) => {
+          setOtwOrder(data);
+        });
+      });
+    }
+
     socket.on("connect_error", (err) => {
       console.error(err.message);
     });
     return () => {
+      if (transId) socket.emit("unsubTrans", transId);
       socket.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id]);
+  }, [user?.id, transId]);
 
   return (
     <Bg>
