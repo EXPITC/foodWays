@@ -380,7 +380,7 @@ const Map = ({ toggle, far, setLocEdit, updateLoc, startLoc, cart }) => {
             <h3 h>Delivery Time</h3>
             <p>{toMinutes(duration)} Minutes</p>
             {otwOrder ? (
-              <button onClick={toggle}>Confirm Order Done</button>
+              <button onClick={toggle}>Finished Order</button>
             ) : (
               <button disabled>Waiting Approve</button>
             )}
