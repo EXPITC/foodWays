@@ -255,15 +255,20 @@ const LandingPage = () => {
                       key={index + menu.img + menu.price}
                       onClick={handleLogin}
                     >
-                      <img src={menu.img} alt={menu.title} />
+                      <img
+                        src={menu.img}
+                        alt={menu.title}
+                        height={"100%"}
+                        width={"160px"}
+                      />
                       <h3>{menu.title}</h3>
                       <div className="wrapInformation">
                         <div>
                           <img
                             src={menu.seller.restos.img}
                             alt="logo"
-                            height={"160px"}
-                            width={"100%"}
+                            width={"30px"}
+                            height={"50%"}
                           />
                           <p>{menu.seller.restos.title}</p>
                         </div>
