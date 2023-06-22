@@ -50,8 +50,10 @@ const TransactionPage = () => {
   useEffect(() => {
     // get the transactions value
     if (!state?.user?.id) return;
+    console.log("hit?");
     socket.emit("transactions");
     socket.on("transactionsData", (value) => {
+      console.log({ value });
       setTransactions(value);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -59,8 +61,9 @@ const TransactionPage = () => {
 
   const handleApprove = (id) => {
     // socket.emit("otw");
+    socket.on("subTrans", id);
     socket.emit("accept", id);
-    // setRefresh(!refresh);
+
     socket.on("acceptData", (data) => {
       if (!data[1][0]) return;
       setTransactions((prev) => {
@@ -70,6 +73,8 @@ const TransactionPage = () => {
         });
       });
     });
+
+    socket.on("unsubTrans", id);
   };
   const handleCancel = (id) => {
     socket.emit("cancel", id);

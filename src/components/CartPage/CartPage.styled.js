@@ -185,7 +185,7 @@ export const FlexCollum = styled.div`
   display: flex;
   flex-direction: column;
   width: 30%;
-  tb {
+  tbody {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
@@ -194,11 +194,17 @@ export const FlexCollum = styled.div`
     border-top: 2px solid black;
     border-collapse: collapse;
   }
+  tr > td {
+    /* border: 1px solid black; */
+    display: flex;
+    /* flex-direction: column; */
+    justify-content: space-evenly;
+  }
 `;
 export const Pp = styled.p`
-  @import url("https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&family=Montserrat:ital,wght@1,100&family=Shippori+Antique+B1&display=swap");
+  // @import url("https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&family=Montserrat:ital,wght@1,100&family=Shippori+Antique+B1&display=swap");
   font-family: "Montserrat", sans-serif;
-  color: ${(props) => (props.r ? "red !important" : "black !important")};
+  color: ${(props) => (props.r ? "red !important;" : "black !important;")};
   font-size: 14px;
   font-weight: ${(props) => (props.b ? "bold" : null)};
 `;
