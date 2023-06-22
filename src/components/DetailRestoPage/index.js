@@ -46,9 +46,11 @@ const DetailRestoPage = (_req, _res) => {
         .catch((err) => {
           handleError(err);
         });
+
       // Owner cant have cart
       if (!isLogin) return;
       if (isOwner) return;
+
       await API.get("/transaction/ongoing", { signal })
         .then((res) => {
           setTransactionOngoing(res.data.data.status);
@@ -120,9 +122,10 @@ const DetailRestoPage = (_req, _res) => {
 
         const body = JSON.stringify(form);
         let res = await API.post("/add/transaction", body, config);
+        console.log({ res });
         if (res.status === 201) {
           res = {
-            transactionId: res.data.thenTransaction.id,
+            transactionId: res.data.onGoingTransaction.id,
             ...form.product[0],
           };
 
@@ -131,6 +134,14 @@ const DetailRestoPage = (_req, _res) => {
         }
         setRefresh((prev) => !prev);
       } catch (err) {
+        if (
+          err?.response?.status === 409 &&
+          err?.response?.data?.status === "order not finish"
+        ) {
+          console.log(err.response.data.status.onGoingTransaction);
+          setLastResto({ unfinishedOrder: true });
+          setModalConfirmation(true);
+        }
         handleError(err);
       }
     })();
@@ -166,7 +177,10 @@ const DetailRestoPage = (_req, _res) => {
       {modalConfirmation && (
         <Modal>
           <div className="modal-left">
-            {"You still have order at resto " + lastResto?.title}
+            You still have{" "}
+            {lastResto?.unfinishedOrder
+              ? "unfinished order in this resto"
+              : "order at resto " + lastResto?.title}
           </div>
           <div className="modal-left">
             Do you want to <span>Cancel</span> the last Order?
