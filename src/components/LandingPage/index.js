@@ -99,22 +99,23 @@ const LandingPage = () => {
       {/* <Header/> */}
       <WrapperYellow>
         <OneLineFlexTop>
-          <img src={Icon} alt="icon" />
+          <img src={Icon} alt="icon" height={40} width={124} />
           <div>
             {isLogin ? (
               <>
                 {isCustomer ? (
                   <Link to={total !== 0 ? "/cart" : "/resto"}>
                     {total !== 0 && <p>{total}</p>}
-                    <ImgTrolly src={Trolly} alt="Trolly" />
+                    <ImgTrolly
+                      src={Trolly}
+                      alt="Trolly"
+                      width={35}
+                      height={45}
+                    />
                   </Link>
                 ) : (
                   <Link className="cart" to={`/Resto/${user?.resto?.id || ""}`}>
-                    <img
-                      style={{ width: "50px", height: "50px" }}
-                      src={Shop}
-                      alt="shop"
-                    />
+                    <img src={Shop} alt="shop" height={50} width={50} />
                   </Link>
                 )}
                 <ImgProfile
@@ -122,6 +123,8 @@ const LandingPage = () => {
                   src={user.image}
                   onClick={handleDropdown}
                   alt="Profile"
+                  height={60}
+                  width={60}
                 />
 
                 {drop && (
@@ -146,10 +149,10 @@ const LandingPage = () => {
         <TextAndPizza>
           <Text>
             <h1>
-              Are You Hungry? <br></br> Express Home Delivery
+              Are You Hungry? <br /> Express Home Delivery
             </h1>
             <WrapFlex>
-              <h2> </h2>
+              <span></span>
               <p>
                 Lorem Ipsum is simply dummy text of the printing and typesetting
                 industry. Lorem Ipsum has been the industry's standard dummy
@@ -172,7 +175,12 @@ const LandingPage = () => {
                   key={index + 2 + resto.img}
                 >
                   <CardResto key={resto.title}>
-                    <img src={resto.img} alt={resto.name} />
+                    <img
+                      src={resto.img}
+                      alt={resto.title}
+                      width={"75px"}
+                      height={"75px"}
+                    />
                     <h2>{resto.title}</h2>
                   </CardResto>
                 </Link>
@@ -200,11 +208,21 @@ const LandingPage = () => {
                           key={index + menu.title}
                         >
                           <CardNear>
-                            <img src={menu.img} alt={menu.title} />
+                            <img
+                              src={menu.img}
+                              alt={menu.title}
+                              height={"100%"}
+                              width={"160px"}
+                            />
                             <h3>{menu.title}</h3>
                             <div className="wrapInformation">
                               <div>
-                                <img src={near.resto.img} alt="img logo" />
+                                <img
+                                  src={near.resto.img}
+                                  alt="resto logo"
+                                  width={"30px"}
+                                  height={"50%"}
+                                />
                                 <p>{near.resto.title}</p>
                               </div>
                               <div>
@@ -241,7 +259,12 @@ const LandingPage = () => {
                       <h3>{menu.title}</h3>
                       <div className="wrapInformation">
                         <div>
-                          <img src={menu.seller.restos.img} alt="logo" />
+                          <img
+                            src={menu.seller.restos.img}
+                            alt="logo"
+                            height={"160px"}
+                            width={"100%"}
+                          />
                           <p>{menu.seller.restos.title}</p>
                         </div>
                         <div>

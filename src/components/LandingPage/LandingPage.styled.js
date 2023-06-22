@@ -135,14 +135,15 @@ export const TextAndPizza = styled.div`
   display: flex;
   position: absolute;
   max-width: 1066px;
+  min-width: 70%;
   height: 393px;
-  padding-left: 20px;
-  padding-right: 20px;
   bottom: 60px;
-  /* border:1px solid black; */
+  overflow: hidden;
 `;
 export const Text = styled.div`
+  position: relative;
   flex: 60;
+  min-width: fit-content;
   width: 60%;
   height: 100%;
   /* border:1px solid red; */
@@ -151,7 +152,7 @@ export const Text = styled.div`
     font-size: 55px;
     line-height: 65px;
   }
-  h2 {
+  span {
     position: inline;
     width: 150px;
     height: 3px;
@@ -170,6 +171,7 @@ export const Text = styled.div`
 `;
 export const ImgPizza = styled.img`
   flex: 40;
+  position: relative;
   padding-left: 26px;
   width: 40%;
   height: 100%;
@@ -195,6 +197,9 @@ export const ImgTrolly = styled.img`
 export const WrapFlex = styled.div`
   display: flex;
   flex-direction: row;
+  > p {
+    min-width: 250px;
+  }
   /* border:1px solid blue; */
 `;
 export const WrapFlex2 = styled.div`
