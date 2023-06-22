@@ -106,17 +106,16 @@ const LandingPage = () => {
                 {isCustomer ? (
                   <Link to={total !== 0 ? "/cart" : "/resto"}>
                     {total !== 0 && <p>{total}</p>}
-                    <ImgTrolly src={Trolly} alt="Trolly" />
+                    <ImgTrolly
+                      src={Trolly}
+                      alt="Trolly"
+                      width={35}
+                      height={45}
+                    />
                   </Link>
                 ) : (
                   <Link className="cart" to={`/Resto/${user?.resto?.id || ""}`}>
-                    <img
-                      style={{ width: "50px", height: "50px" }}
-                      src={Shop}
-                      alt="shop"
-                      height={43}
-                      width={35}
-                    />
+                    <img src={Shop} alt="shop" height={50} width={50} />
                   </Link>
                 )}
                 <ImgProfile
@@ -178,7 +177,7 @@ const LandingPage = () => {
                   <CardResto key={resto.title}>
                     <img
                       src={resto.img}
-                      alt={resto.name}
+                      alt={resto.title}
                       width={"75px"}
                       height={"75px"}
                     />
@@ -220,7 +219,7 @@ const LandingPage = () => {
                               <div>
                                 <img
                                   src={near.resto.img}
-                                  alt="img logo"
+                                  alt="resto logo"
                                   width={"30px"}
                                   height={"50%"}
                                 />
